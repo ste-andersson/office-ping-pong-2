@@ -66,7 +66,7 @@ export const loadResultsView = async () => {
         <div class="match-player">
           <img
             class="match-avatar"
-            src="/src/assets/${match.topPlayerAvatar}"
+            src="/assets/${match.topPlayerAvatar}"
             alt="${match.topPlayerName}"
           />
           <span class="match-player-name">${match.topPlayerName}</span>
@@ -81,7 +81,7 @@ export const loadResultsView = async () => {
         <div class="match-player">
           <img
             class="match-avatar"
-            src="/src/assets/${match.bottomPlayerAvatar}"
+            src="/assets/${match.bottomPlayerAvatar}"
             alt="${match.bottomPlayerName}"
           />
           <span class="match-player-name">${match.bottomPlayerName}</span>

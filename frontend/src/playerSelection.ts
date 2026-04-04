@@ -47,8 +47,8 @@ const renderPlayers = (top: Player, bottom: Player) => {
   topName.textContent = top.name;
   bottomName.textContent = bottom.name;
 
-  topAvatar.src = `/src/assets/${top.avatar}`;
-  bottomAvatar.src = `/src/assets/${bottom.avatar}`;
+  topAvatar.src = `/assets/${top.avatar}`;
+  bottomAvatar.src = `/assets/${bottom.avatar}`;
 
   topAvatar.alt = `${top.name} avatar`;
   bottomAvatar.alt = `${bottom.name} avatar`;
@@ -78,7 +78,7 @@ const renderPickerList = () => {
     button.type = "button";
 
     button.innerHTML = `
-    <img class="player-picker-avatar" src="/src/assets/${player.avatar}" />
+    <img class="player-picker-avatar" src="/assets/${player.avatar}" />
     <span class="player-picker-name">${player.name}</span>
     `;
 

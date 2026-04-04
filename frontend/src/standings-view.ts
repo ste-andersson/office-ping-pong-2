@@ -32,7 +32,7 @@ export const loadStandingsView = async () => {
   <div class="standings-player-card">
     <img
       class="standings-avatar"
-      src="/src/assets/${standing.playerAvatar}"
+      src="/assets/${standing.playerAvatar}"
       alt="${standing.playerName}"
     />
   </div>
