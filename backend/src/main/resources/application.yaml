@@ -2,14 +2,14 @@ spring:
   application:
     name: office-ping-pong
   datasource:
-    url: jdbc:postgresql://localhost:5433/office_ping_pong
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
 
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
   sql:
     init:

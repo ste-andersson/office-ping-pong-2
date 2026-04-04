@@ -12,8 +12,9 @@ type Standing = {
 export const loadStandingsView = async () => {
   const container = document.getElementById("standings-list") as HTMLDivElement;
 
-  const response = await fetch(`${API_BASE_URL}/api/matches/standings`);
+  const response = await fetch(`${API_BASE_URL}/api/matches/standings`, { cache: "no-store" });
   const standings: Standing[] = await response.json();
+  console.log("standings:", standings);
 
   container.innerHTML = "";
 
@@ -24,12 +25,10 @@ export const loadStandingsView = async () => {
 
   standings.forEach((standing, index) => {
     const row = document.createElement("div");
-    row.className = "standings-row";
+    row.className = `standings-row ${index === 0 ? 'rank-gold' : index === 1 ? 'rank-silver' : index === 2 ? 'rank-bronze' : ''}`;
 
     row.innerHTML = `
-  <div class="standings-rank ${index === 0 ? 'rank-gold' : index === 1 ? 'rank-silver' : index === 2 ? 'rank-bronze' : ''}">
-    ${index + 1}
-  </div>
+  <div class="standings-rank">${index + 1}</div>
   <div class="standings-player-card">
     <img
       class="standings-avatar"

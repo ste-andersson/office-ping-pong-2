@@ -57,7 +57,9 @@ public class MatchService {
                     long wins = matches.stream()
                             .filter(m ->
                                     (m.getTopPlayer().equals(p) &&
-                                            m.getTopPlayerScore() > m.getBottomPlayerScore()))
+                                            m.getTopPlayerScore() > m.getBottomPlayerScore()) ||
+                                            (m.getBottomPlayer().equals(p) &&
+                                                    m.getBottomPlayerScore() > m.getTopPlayerScore()))
                             .count();
 
                     long winRate = matchesPlayed == 0

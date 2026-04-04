@@ -34,9 +34,9 @@
   color: #aaa;
 }
 
-.standings-rank.rank-gold   { color: #c9a227; }
-.standings-rank.rank-silver { color: #8a9aaa; }
-.standings-rank.rank-bronze { color: #a0694a; }
+.rank-gold .standings-rank   { color: #c9a227; }
+.rank-silver .standings-rank { color: #8a9aaa; }
+.rank-bronze .standings-rank { color: #a0694a; }
 
 .standings-player-card {
   position: relative;
@@ -52,7 +52,16 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  background: #d8d8d8;
+}
+
+.rank-gold .standings-player-card {
+  background: linear-gradient(145deg, #f5e27a, #c9a227, #f5e27a, #a87c10);
+}
+.rank-silver .standings-player-card {
+  background: linear-gradient(145deg, #e8e8e8, #9aabb5, #e8e8e8, #6a8090);
+}
+.rank-bronze .standings-player-card {
+  background: linear-gradient(145deg, #d4956a, #a0694a, #d4956a, #7a4a2a);
 }
 
 .standings-main {
