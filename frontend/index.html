@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SALT Ping Pong League 2026</title>
+  </head>
+
+  <body class="app-loading">
+    <div id="app">
+      <!-- Header -->
+      <header>
+        <img class = "logo" src="./src/assets/logo.png" alt="SALT Ping-Pong League">
+      </header>
+
+      <!-- Main content -->
+      <main>
+        <!-- REPORT VIEW -->
+        <section id="report-view" class="view">
+          <!-- Player 1 -->
+          <div class="player player-top">
+            <div id="player-card-top" class="player-card">
+              <img
+                id="player-avatar-top"
+                class="player-avatar"
+                src="/src/assets/generic-avatar.png"
+                alt="Generic avatar"
+              />
+              <span id="player-name-top" class="player-name">PLAYER 1</span>
+            </div>
+
+            <div class="score-controls">
+              <button id="p1-minus" class="btn-minus">-</button>
+              <span class="score" id="score-p1">0</span>
+              <button id="p1-plus" class="btn-plus">+</button>
+            </div>
+          </div>
+
+          <!-- Player 2 -->
+          <div class="player player-bottom">
+            <div id="player-card-bottom" class="player-card">
+              <img
+                id="player-avatar-bottom"
+                class="player-avatar"
+                src="/src/assets/generic-avatar.png"
+                alt="Generic avatar"
+              />
+              <span id="player-name-bottom" class="player-name">PLAYER 2</span>
+            </div>
+
+            <div class="score-controls">
+              <button id="p2-minus" class="btn-minus">-</button>
+              <span class="score" id="score-p2">0</span>
+              <button id="p2-plus" class="btn-plus">+</button>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="submit-container">
+            <button id="submit-btn">SUBMIT SCORE</button>
+          </div>
+        </section>
+
+        <div id="player-picker" class="player-picker hidden">
+          <div class="player-picker-content">
+            <h2 id="player-picker-title">Choose player</h2>
+            <div id="player-picker-list"></div>
+            <button id="close-player-picker">Close</button>
+          </div>
+        </div>
+
+        <!-- RESULTS VIEW (placeholder) -->
+        <section id="results-view" class="view">
+          <h2>Results</h2>
+          <div id="results-list">
+            <!-- fylls via TS -->
+          </div>
+        </section>
+
+        <!-- STANDINGS VIEW (placeholder) -->
+        <section id="standings-view" class="view">
+          <h2>Standings</h2>
+          <div id="standings-list">
+            <!-- fylls via TS -->
+          </div>
+        </section>
+      </main>
+
+      <!-- Navigation (vänster/höger) -->
+      <nav class="nav-buttons">
+        <button id="prev-view">‹</button>
+        <button id="next-view">›</button>
+      </nav>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

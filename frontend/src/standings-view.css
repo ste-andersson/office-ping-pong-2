@@ -1,0 +1,141 @@
+#standings-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 8px 0;
+  background: var(--bg-app);
+}
+
+#standings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 0 80px;
+}
+
+.standings-row {
+  display: grid;
+  grid-template-columns: 40px 72px 1fr 56px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.standings-rank {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-align: center;
+  color: #aaa;
+}
+
+.standings-rank.rank-gold   { color: #c9a227; }
+.standings-rank.rank-silver { color: #8a9aaa; }
+.standings-rank.rank-bronze { color: #a0694a; }
+
+.standings-player-card {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.standings-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #d8d8d8;
+}
+
+.standings-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.standings-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.standings-meta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #999;
+}
+
+.standings-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.standings-score-value {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+  color: #111;
+}
+
+.standings-score-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.standings-empty {
+  text-align: center;
+  padding: 24px 12px;
+  font-weight: 700;
+  color: #666;
+}
+
+@media (max-width: 420px) {
+  .standings-row {
+    grid-template-columns: 32px 60px 1fr 48px;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .standings-player-card {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+  }
+
+  .standings-rank {
+    font-size: 1.2rem;
+  }
+
+  .standings-name {
+    font-size: 0.9rem;
+  }
+
+  .standings-meta {
+    font-size: 0.72rem;
+  }
+
+  .standings-score-value {
+    font-size: 1.6rem;
+  }
+
+  .standings-score-label {
+    font-size: 0.62rem;
+  }
+}

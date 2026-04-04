@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: office-ping-pong
+  datasource:
+    url: jdbc:postgresql://localhost:5433/office_ping_pong
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  sql:
+    init:
+      mode: never
