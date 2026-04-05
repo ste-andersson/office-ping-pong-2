@@ -6,19 +6,29 @@ import "./results-view.css";
 import "./standings-view.css";
 
 import { initViewNavigation } from "./viewNavigation";
-import { initScoreControls } from "./scoreControls"
+import { initScoreControls } from "./scoreControls";
 import { initPlayerSelection } from "./playerSelection";
 import { initSubmitMatch } from "./submitMatch";
 import { loadResultsView } from "./results-view";
 import { loadStandingsView } from "./standings-view";
 
 const initApp = async () => {
-initScoreControls();
-initViewNavigation();
-await initPlayerSelection();
-initSubmitMatch();
-loadResultsView();
-loadStandingsView();
+  initScoreControls();
+  const { goToView } = initViewNavigation();
+  await initPlayerSelection();
+  initSubmitMatch(goToView);
+  loadResultsView();
+  loadStandingsView();
 };
+
+document
+  .querySelectorAll(".btn-minus, .btn-plus, #submit-btn")
+  .forEach((btn) => {
+    btn.addEventListener("touchstart", () => btn.classList.add("pressed"), {
+      passive: true,
+    });
+    btn.addEventListener("touchend", () => btn.classList.remove("pressed"));
+    btn.addEventListener("touchcancel", () => btn.classList.remove("pressed"));
+  });
 
 initApp();

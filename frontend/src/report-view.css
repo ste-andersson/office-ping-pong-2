@@ -96,12 +96,18 @@
 
 .btn-minus:active,
 .btn-plus:active {
-  transform: scale(0.96);
+  filter: brightness(0.82);
 }
 
 .btn-minus:hover,
 .btn-plus:hover {
   filter: brightness(1.03);
+}
+
+.btn-minus.pressed,
+.btn-plus.pressed {
+
+  filter: brightness(0.82);
 }
 
 .player-top .btn-minus,
@@ -187,6 +193,10 @@
 
 #submit-btn:active {
   transform: scale(0.985);
+}
+
+#submit-btn.pressed {
+  filter: brightness(0.9);
 }
 
 @media (max-width: 420px) {

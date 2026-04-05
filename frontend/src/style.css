@@ -110,19 +110,22 @@ main {
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
-  color: var(--orange-dark);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(1px);
+  color: #d7815980;
   font-size: 2rem;
   font-weight: 900;
   line-height: 1;
+  padding-bottom: 5px;
   cursor: pointer;
   pointer-events: auto;
   box-shadow:
     0 4px 10px rgba(0, 0, 0, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
   transition:
-    transform 0.12s ease,
-    filter 0.12s ease,
-    opacity 0.12s ease;
+    transform 0.65s ease,
+    filter 0.65s ease,
+    opacity 0.65s ease;
   display: flex;
   align-items: center;
   justify-content: center;

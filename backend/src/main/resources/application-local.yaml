@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/office_ping_pong
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true

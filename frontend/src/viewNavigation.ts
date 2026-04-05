@@ -37,9 +37,10 @@ const positionViews = () => {
 };
 
 const updateNavButtons = () => {
-  prevButton.style.visibility = currentIndex === 0 ? "hidden" : "visible";
-  nextButton.style.visibility =
-    currentIndex === views.length - 1 ? "hidden" : "visible";
+  prevButton.style.opacity = currentIndex === 0 ? "0" : "1";
+  prevButton.style.pointerEvents = currentIndex === 0 ? "none" : "auto";
+  nextButton.style.opacity = currentIndex === views.length - 1 ? "0" : "1";
+  nextButton.style.pointerEvents = currentIndex === views.length - 1 ? "none" : "auto";
 };
 
 const goToView = (nextIndex: number) => {
@@ -100,4 +101,6 @@ requestAnimationFrame(() => {
   document.body.classList.remove("app-loading");
 });
 
-}
+return { goToView };
+
+};

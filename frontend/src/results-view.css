@@ -108,6 +108,16 @@
   color: #666;
 }
 
+@keyframes highlightNew {
+  0%   { background: #d9e3d6; }
+  60%  { background: #d9e3d6; }
+  100% { background: white; }
+}
+
+.match-card--new {
+  animation: highlightNew 2s ease forwards;
+}
+
 @media (max-width: 420px) {
   .match-card {
     grid-template-columns: 72px 1fr 72px;
