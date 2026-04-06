@@ -134,10 +134,6 @@ export const initPlayerSelection = async () => {
     .addEventListener("click", () => openPicker("bottom"));
 
   document
-    .getElementById("close-player-picker")!
-    .addEventListener("click", closePicker);
-
-  document
     .getElementById("player-picker")!
     .addEventListener("click", (event) => {
       if (event.target === event.currentTarget) {
