@@ -12,6 +12,10 @@ import { initSubmitMatch } from "./submitMatch";
 import { loadResultsView } from "./results-view";
 import { loadStandingsView } from "./standings-view";
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
 const initApp = async () => {
   initScoreControls();
   const { goToView } = initViewNavigation();
