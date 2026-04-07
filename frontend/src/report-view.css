@@ -292,7 +292,6 @@
   .player-name {
     font-size: 0.75rem;
     padding: 6px 4px;
-    color: red;
   }
 
   .score-controls {
@@ -324,7 +323,6 @@
   .player-name {
     font-size: 0.75rem;
     padding: 6px 4px;
-    color: blue;
   }
 
   .score-controls {
