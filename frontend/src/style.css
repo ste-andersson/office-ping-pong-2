@@ -174,8 +174,7 @@ main {
   #app {
     width: 100%;
     max-width: none;
-    min-height: 100vh;
-    min-height: 100lvh;
+    min-height: 100dvh;
     border: none;
     border-radius: 0;
     padding: 16px 10px 0px;
