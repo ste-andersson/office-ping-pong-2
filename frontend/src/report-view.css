@@ -282,3 +282,34 @@
     font-size: 3.8rem;
   }
 }
+
+@media (max-width: 420px) and (max-height: 710px) {
+  .player-card {
+    width: 100px;
+    height: 100px;
+  }
+
+  .player-name {
+    font-size: 0.75rem;
+    padding: 6px 4px;
+  }
+
+  .score-controls {
+    grid-template-columns: 76px 1fr 76px;
+  }
+
+  .btn-minus,
+  .btn-plus,
+  .score {
+    min-height: 50px;
+  }
+
+  .btn-minus,
+  .btn-plus {
+    font-size: 3rem;
+  }
+
+  .score {
+    font-size: 3.0rem;
+  }
+}
