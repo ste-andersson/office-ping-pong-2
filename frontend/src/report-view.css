@@ -106,7 +106,6 @@
 
 .btn-minus.pressed,
 .btn-plus.pressed {
-
   filter: brightness(0.82);
 }
 
@@ -197,6 +196,13 @@
 
 #submit-btn.pressed {
   filter: brightness(0.9);
+}
+
+#submit-btn:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
+  font-size: 2.4rem;
+  letter-spacing: 0;
 }
 
 @media (max-width: 420px) {
@@ -310,7 +316,7 @@
   }
 
   .score {
-    font-size: 3.0rem;
+    font-size: 3rem;
   }
 }
 

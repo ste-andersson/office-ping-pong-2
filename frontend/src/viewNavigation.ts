@@ -1,6 +1,12 @@
 import { loadResultsView } from "./results-view";
 import { loadStandingsView } from "./standings-view";
 
+let justSubmitted = false;
+
+export const setJustSubmitted = (value: boolean) => {
+  justSubmitted = value;
+};
+
 export const initViewNavigation = () => {
   const views: HTMLElement[] = [
     document.getElementById("report-view") as HTMLElement,
@@ -77,15 +83,13 @@ export const initViewNavigation = () => {
 
     const onTransitionEnd = (event: TransitionEvent) => {
       if (event.propertyName !== "transform") return;
-
       currentView.removeEventListener("transitionend", onTransitionEnd);
-
       currentIndex = nextIndex;
       positionViews();
       updateNavButtons();
       isAnimating = false;
 
-      if (nextIndex === 1) loadResultsView();
+      if (nextIndex === 1 && !justSubmitted) loadResultsView();
       if (nextIndex === 2) loadStandingsView();
     };
 
