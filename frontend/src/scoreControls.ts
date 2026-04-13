@@ -10,39 +10,47 @@ const renderScores = (): void => {
 };
 
 export const initScoreControls = () => {
+  const p1Plus = document.getElementById("p1-plus") as HTMLButtonElement;
+  const p1Minus = document.getElementById("p1-minus") as HTMLButtonElement;
+  const p2Plus = document.getElementById("p2-plus") as HTMLButtonElement;
+  const p2Minus = document.getElementById("p2-minus") as HTMLButtonElement;
 
-const p1Plus = document.getElementById("p1-plus") as HTMLButtonElement;
-const p1Minus = document.getElementById("p1-minus") as HTMLButtonElement;
-const p2Plus = document.getElementById("p2-plus") as HTMLButtonElement;
-const p2Minus = document.getElementById("p2-minus") as HTMLButtonElement;
-
-p1Plus.addEventListener("click", () => {
-  topPlayerScore += 1;
-  renderScores();
-});
-
-p1Minus.addEventListener("click", () => {
-  if (topPlayerScore > 0) {
-    topPlayerScore -= 1;
+  p1Plus.addEventListener("click", () => {
+    topPlayerScore += 1;
     renderScores();
-  }
-});
+  });
 
-p2Plus.addEventListener("click", () => {
-  bottomPlayerScore += 1;
-  renderScores();
-});
+  p1Minus.addEventListener("click", () => {
+    if (topPlayerScore > 0) {
+      topPlayerScore -= 1;
+      renderScores();
+    }
+  });
 
-p2Minus.addEventListener("click", () => {
-  if (bottomPlayerScore > 0) {
-    bottomPlayerScore -= 1;
+  p2Plus.addEventListener("click", () => {
+    bottomPlayerScore += 1;
     renderScores();
-  }
-});
+  });
 
-renderScores();
+  p2Minus.addEventListener("click", () => {
+    if (bottomPlayerScore > 0) {
+      bottomPlayerScore -= 1;
+      renderScores();
+    }
+  });
 
-}
+  scoreP1.addEventListener("click", () => {
+    topPlayerScore = topPlayerScore === 11 ? 0 : 11;
+    renderScores();
+  });
+
+  scoreP2.addEventListener("click", () => {
+    bottomPlayerScore = bottomPlayerScore === 11 ? 0 : 11;
+    renderScores();
+  });
+
+  renderScores();
+};
 
 export const getScores = () => {
   return {
