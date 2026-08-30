@@ -45,6 +45,23 @@
   border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
+  border: 3px solid transparent;
+  box-sizing: border-box;
+}
+
+.standings-player-card.team-java {
+  background: var(--orange-dark);
+  border-color: var(--orange-dark);
+}
+
+.standings-player-card.team-core {
+  background: var(--gray-dark);
+  border-color: var(--gray-dark);
+}
+
+.standings-player-card.team-data-ai {
+  background: var(--green-dark);
+  border-color: var(--green-dark);
 }
 
 .standings-avatar {

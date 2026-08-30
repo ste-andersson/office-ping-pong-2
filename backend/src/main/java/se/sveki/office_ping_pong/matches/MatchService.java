@@ -36,6 +36,8 @@ public class MatchService {
                         match.getBottomPlayer().getName(),
                         match.getTopPlayer().getAvatar(),
                         match.getBottomPlayer().getAvatar(),
+                        match.getTopPlayer().getTeam(),
+                        match.getBottomPlayer().getTeam(),
                         match.getTopPlayerScore(),
                         match.getBottomPlayerScore(),
                         match.getPlayedAt()
@@ -70,6 +72,7 @@ public class MatchService {
                             p.getId(),
                             p.getName(),
                             p.getAvatar(),
+                            p.getTeam(),
                             matchesPlayed,
                             wins,
                             winRate

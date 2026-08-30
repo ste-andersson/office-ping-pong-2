@@ -4,6 +4,7 @@ public record StandingsDto(
         long playerId,
         String playerName,
         String playerAvatar,
+        String playerTeam,
         long matchesPlayed,
         long wins,
         long winRate

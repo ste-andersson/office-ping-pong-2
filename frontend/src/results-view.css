@@ -61,6 +61,19 @@
   border-radius: 14px;
   overflow: hidden;
   flex-shrink: 0;
+  background: #d8d8d8;
+}
+
+.match-player.team-java {
+  background: var(--orange-dark);
+}
+
+.match-player.team-core {
+  background: var(--gray-dark);
+}
+
+.match-player.team-data-ai {
+  background: var(--green-dark);
 }
 
 .match-avatar {
@@ -68,7 +81,6 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  background: #d8d8d8;
 }
 
 .match-player-name {

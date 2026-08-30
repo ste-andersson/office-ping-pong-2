@@ -8,6 +8,8 @@ public record MatchResponseDto(
         String bottomPlayerName,
         String topPlayerAvatar,
         String bottomPlayerAvatar,
+        String topPlayerTeam,
+        String bottomPlayerTeam,
         int topPlayerScore,
         int bottomPlayerScore,
         LocalDateTime playedAt

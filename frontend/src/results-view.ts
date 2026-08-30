@@ -6,6 +6,8 @@ type Match = {
   bottomPlayerName: string;
   topPlayerAvatar: string;
   bottomPlayerAvatar: string;
+  topPlayerTeam: string;
+  bottomPlayerTeam: string;
   topPlayerScore: number;
   bottomPlayerScore: number;
   playedAt: string;
@@ -40,7 +42,9 @@ const groupMatchesByDate = (matches: Match[]) => {
 export const loadResultsView = async () => {
   const container = document.getElementById("results-list") as HTMLDivElement;
 
-  const response = await fetch(`${API_BASE_URL}/api/matches`);
+  const response = await fetch(`${API_BASE_URL}/api/matches`, {
+    cache: "no-store",
+  });
   const matches: Match[] = await response.json();
 
   container.innerHTML = "";
@@ -63,7 +67,7 @@ export const loadResultsView = async () => {
       card.className = "match-card";
 
       card.innerHTML = `
-        <div class="match-player">
+        <div class="match-player team-${match.topPlayerTeam}">
           <img
             class="match-avatar"
             src="/assets/${match.topPlayerAvatar}"
@@ -78,7 +82,7 @@ export const loadResultsView = async () => {
           <span>${match.bottomPlayerScore}</span>
         </div>
 
-        <div class="match-player">
+        <div class="match-player team-${match.bottomPlayerTeam}">
           <img
             class="match-avatar"
             src="/assets/${match.bottomPlayerAvatar}"

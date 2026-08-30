@@ -4,6 +4,7 @@ type Standing = {
   playerId: number;
   playerName: string;
   playerAvatar: string;
+  playerTeam: string;
   matchesPlayed: number;
   wins: number;
   winRate: number;
@@ -29,7 +30,7 @@ export const loadStandingsView = async () => {
 
     row.innerHTML = `
   <div class="standings-rank">${index + 1}</div>
-  <div class="standings-player-card">
+  <div class="standings-player-card team-${standing.playerTeam}">
     <img
       class="standings-avatar"
       src="/assets/${standing.playerAvatar}"

@@ -19,7 +19,9 @@ let currentSlot: "top" | "bottom" | null = null;
 let currentTeamFilter: string | null = null;
 
 const fetchPlayers = async (): Promise<Player[]> => {
-  const res = await fetch(`${API_BASE_URL}/api/players`);
+  const res = await fetch(`${API_BASE_URL}/api/players`, {
+    cache: "no-store",
+  });
   if (!res.ok) throw new Error("Failed to fetch players");
   return res.json();
 };
