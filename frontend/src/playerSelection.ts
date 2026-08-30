@@ -11,6 +11,8 @@ type Player = {
 const PICKER_COLUMNS = 3;
 const PICKER_GAP_PX = 12;
 const PICKER_MIN_ROWS = 4;
+// fraction of an extra row peeking in at the bottom, hinting that the list scrolls
+const PICKER_PEEK_ROW_FRACTION = 0.35;
 
 let allPlayers: Player[] = [];
 let topPlayer: Player;
@@ -96,6 +98,14 @@ const renderPickerTabs = () => {
     });
 };
 
+const updatePickerFade = () => {
+  const scroll = document.getElementById("player-picker-list-scroll")!;
+  const fade = document.getElementById("player-picker-fade")!;
+  const canScrollMore =
+    scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight > 1;
+  fade.classList.toggle("hidden", !canScrollMore);
+};
+
 const renderPickerList = () => {
   const list = document.getElementById("player-picker-list")!;
   list.innerHTML = "";
@@ -135,22 +145,25 @@ const renderPickerList = () => {
     list.appendChild(button);
   });
 
-  // pin the list at PICKER_MIN_ROWS rows worth of height so the picker box
-  // never grows/shrinks between teams with different player counts: fewer
-  // players leave blank space below (min-height), more players scroll
-  // within that height instead of growing the box (max-height). Using
-  // `height` directly instead of min/max would make the grid's implicit
-  // "auto" row tracks shrink to fit rather than scroll. Measure without a
-  // vertical scrollbar first, since one showing up would shrink clientWidth
-  // and skew the computed row height.
-  list.style.overflowY = "hidden";
+  // pin .player-picker-list-scroll at PICKER_MIN_ROWS rows worth of height
+  // so the picker box never grows/shrinks between teams with different
+  // player counts: fewer players leave blank space below (min-height), more
+  // players scroll within that height instead of growing the box
+  // (max-height). Using `height` directly instead of min/max would make the
+  // grid's implicit "auto" row tracks shrink to fit rather than scroll.
+  const scroll = document.getElementById("player-picker-list-scroll")!;
   const itemWidth =
     (list.clientWidth - PICKER_GAP_PX * (PICKER_COLUMNS - 1)) /
     PICKER_COLUMNS;
-  const rowsHeight = `${itemWidth * PICKER_MIN_ROWS + PICKER_GAP_PX * (PICKER_MIN_ROWS - 1)}px`;
-  list.style.minHeight = rowsHeight;
-  list.style.maxHeight = rowsHeight;
-  list.style.overflowY = "";
+  const rowsHeight = `${
+    itemWidth * PICKER_MIN_ROWS +
+    PICKER_GAP_PX * PICKER_MIN_ROWS +
+    itemWidth * PICKER_PEEK_ROW_FRACTION
+  }px`;
+  scroll.style.minHeight = rowsHeight;
+  scroll.style.maxHeight = rowsHeight;
+
+  updatePickerFade();
 };
 
 const selectTeamFilter = (team: string) => {
@@ -199,6 +212,10 @@ export const initPlayerSelection = async () => {
     .forEach((tab) => {
       tab.addEventListener("click", () => selectTeamFilter(tab.dataset.team!));
     });
+
+  document
+    .getElementById("player-picker-list-scroll")!
+    .addEventListener("scroll", updatePickerFade);
 
   document
     .getElementById("player-picker")!

@@ -114,18 +114,63 @@
   border-color: var(--green-dark);
 }
 
+.player-picker-list-wrap {
+  /* non-scrolling: this is only here so .player-picker-fade (absolutely
+     positioned) has a containing block that stays put at the visible
+     bottom edge. An absolutely positioned box whose containing block is
+     itself the scrolling element scrolls away with the content instead of
+     staying pinned — hence the extra layer around .player-picker-list-scroll. */
+  position: relative;
+}
+
+.player-picker-list-scroll {
+  /* max-height is set inline in JS to reserve PICKER_MIN_ROWS worth of
+     height (plus a peek of the next row) regardless of player count: fewer
+     players leave blank space below, more players scroll within this height
+     instead of growing the picker box. A plain `max-height` (rather than
+     aspect-ratio/height:100%) is required here — a definite height on a
+     grid with implicit `auto` row tracks makes those tracks shrink to fit
+     instead of scrolling. */
+  overflow-y: auto;
+  /* a scrollable overflow-y also clips overflow-x (browsers resolve a
+     "visible" overflow-x to "auto" once overflow-y isn't visible), so the
+     hover lift's box-shadow would otherwise be cut off flush against the
+     edge. The negative margin expands this box back out into the parent's
+     own padding, and the matching positive padding gives the shadow room to
+     fade out inside it — net zero shift, so the cards still line up with
+     the team tabs above, but the clip line sits further out. */
+  margin: -6px -16px;
+  padding: 6px 16px;
+  /* hide the native scrollbar so it doesn't sit on top of the rightmost
+     column; the fade + row-5 peek communicate scrollability instead */
+  scrollbar-width: none;
+}
+
+.player-picker-list-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 #player-picker-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-content: start;
   gap: 12px;
-  /* max-height is set inline in JS to reserve exactly PICKER_MIN_ROWS worth
-     of height regardless of player count: fewer players leave blank space
-     below, more players scroll within this height instead of growing the
-     picker box. A plain `max-height` (rather than aspect-ratio/height:100%)
-     is required here — a definite height on a grid with implicit `auto` row
-     tracks makes those tracks shrink to fit instead of scrolling. */
-  overflow-y: auto;
+}
+
+.player-picker-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.player-picker-fade.hidden {
+  opacity: 0;
 }
 
 .player-picker-item {
@@ -140,9 +185,12 @@
   cursor: pointer;
   box-shadow: var(--shadow-soft);
   background: #ccc;
-  transform: scale(1);
+  transform: translateY(0);
   filter: brightness(1);
-  transition: transform 0.5s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
 }
 
 .player-picker-item.team-java {
@@ -173,14 +221,18 @@
 }
 
 .player-picker-item:hover {
-  filter: brightness(1.02);
-  transform: scale(1.05);
+  filter: brightness(1.05);
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.22),
+    var(--shadow-soft);
 }
 
 .player-picker-item.disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  transform: none;
+  transform: translateY(0);
+  box-shadow: var(--shadow-soft);
 }
 
 .player-picker-avatar {
