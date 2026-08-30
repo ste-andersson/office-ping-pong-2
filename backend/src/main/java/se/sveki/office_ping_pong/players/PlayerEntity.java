@@ -14,14 +14,16 @@ public class PlayerEntity {
 
     private String name;
     private String avatar;
+    private String team;
 
     public PlayerEntity() {
         // required by JPA
     }
 
-    public PlayerEntity(String name, String avatar) {
+    public PlayerEntity(String name, String avatar, String team) {
         this.name = name;
         this.avatar = avatar;
+        this.team = team;
     }
 
     public long getId() {
@@ -42,5 +44,13 @@ public class PlayerEntity {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getTeam() {
+        return team;
+    }
+
+    public void setTeam(String team) {
+        this.team = team;
     }
 }
