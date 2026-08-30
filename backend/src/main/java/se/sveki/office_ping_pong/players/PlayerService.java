@@ -19,7 +19,8 @@ public class PlayerService {
         return new PlayerResponseDto(
                 playerEntity.getId(),
                 playerEntity.getName(),
-                playerEntity.getAvatar());
+                playerEntity.getAvatar(),
+                playerEntity.getTeam());
     }
 
     public List<PlayerResponseDto> getAllPlayers() {
@@ -28,7 +29,8 @@ public class PlayerService {
                 map((p) -> new PlayerResponseDto(
                         p.getId(),
                         p.getName(),
-                        p.getAvatar()))
+                        p.getAvatar(),
+                        p.getTeam()))
                 .toList();
     }
 

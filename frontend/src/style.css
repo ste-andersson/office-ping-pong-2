@@ -19,6 +19,11 @@
   --orange-mid-bottom: #c96f48;
   --orange-light: #eadbd4;
 
+  --gray-dark: #5b6270;
+  --gray-mid-top: #98a1ad;
+  --gray-mid-bottom: #7d8695;
+  --gray-light: #eceef1;
+
   --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.14);
   --shadow-button: 0 3px 6px rgba(0, 0, 0, 0.18);
   --radius-big: 18px;

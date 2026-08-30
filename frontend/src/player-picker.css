@@ -48,10 +48,84 @@
   font-size: 1.4rem;
 }
 
+.player-picker-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.player-picker-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 2px solid var(--border-soft);
+  border-radius: 12px;
+  background: #f2f2f2;
+  cursor: pointer;
+  opacity: 0.55;
+  transition:
+    opacity 0.15s ease,
+    transform 0.1s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.player-picker-tab img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.player-picker-tab span {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--text-dark);
+  line-height: 1.1;
+}
+
+.player-picker-tab:hover {
+  opacity: 0.8;
+}
+
+.player-picker-tab:active {
+  transform: scale(0.96);
+}
+
+.player-picker-tab.active {
+  opacity: 1;
+}
+
+.player-picker-tab.team-java.active {
+  background: var(--orange-light);
+  border-color: var(--orange-dark);
+}
+
+.player-picker-tab.team-core.active {
+  background: var(--gray-light);
+  border-color: var(--gray-dark);
+}
+
+.player-picker-tab.team-data-ai.active {
+  background: var(--green-light);
+  border-color: var(--green-dark);
+}
+
 #player-picker-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  align-content: start;
   gap: 12px;
+  /* max-height is set inline in JS to reserve exactly PICKER_MIN_ROWS worth
+     of height regardless of player count: fewer players leave blank space
+     below, more players scroll within this height instead of growing the
+     picker box. A plain `max-height` (rather than aspect-ratio/height:100%)
+     is required here — a definite height on a grid with implicit `auto` row
+     tracks makes those tracks shrink to fit instead of scrolling. */
+  overflow-y: auto;
 }
 
 .player-picker-item {
@@ -68,6 +142,18 @@
   transform: scale(1);
   filter: brightness(1);
   transition: transform 0.5s ease;
+}
+
+.player-picker-item.team-java {
+  background: var(--orange-dark);
+}
+
+.player-picker-item.team-core {
+  background: var(--gray-dark);
+}
+
+.player-picker-item.team-data-ai {
+  background: var(--green-dark);
 }
 
 .player-picker-item:hover {

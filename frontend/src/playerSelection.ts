@@ -4,12 +4,19 @@ type Player = {
   id: number;
   name: string;
   avatar: string;
+  team: string;
 };
+
+// matches #player-picker-list's grid-template-columns and gap in player-picker.css
+const PICKER_COLUMNS = 3;
+const PICKER_GAP_PX = 12;
+const PICKER_MIN_ROWS = 4;
 
 let allPlayers: Player[] = [];
 let topPlayer: Player;
 let bottomPlayer: Player;
 let currentSlot: "top" | "bottom" | null = null;
+let currentTeamFilter: string | null = null;
 
 const fetchPlayers = async (): Promise<Player[]> => {
   const res = await fetch(`${API_BASE_URL}/api/players`);
@@ -34,6 +41,13 @@ const getSelectedPlayers = (players: Player[]) => {
   };
 };
 
+const setTeamClass = (el: Element, team: string) => {
+  Array.from(el.classList)
+    .filter((c) => c.startsWith("team-"))
+    .forEach((c) => el.classList.remove(c));
+  el.classList.add(`team-${team}`);
+};
+
 const renderPlayers = (top: Player, bottom: Player) => {
   const topName = document.getElementById("player-name-top")!;
   const bottomName = document.getElementById("player-name-bottom")!;
@@ -52,11 +66,19 @@ const renderPlayers = (top: Player, bottom: Player) => {
 
   topAvatar.alt = `${top.name} avatar`;
   bottomAvatar.alt = `${bottom.name} avatar`;
+
+  setTeamClass(document.querySelector(".player-top")!, top.team);
+  setTeamClass(document.querySelector(".player-bottom")!, bottom.team);
 };
 
 const savePlayers = (top: Player, bottom: Player) => {
-  localStorage.setItem("topPlayerId", String(top.id));
-  localStorage.setItem("bottomPlayerId", String(bottom.id));
+  try {
+    localStorage.setItem("topPlayerId", String(top.id));
+    localStorage.setItem("bottomPlayerId", String(bottom.id));
+  } catch {
+    // localStorage can throw (e.g. quota/private browsing restrictions in Firefox);
+    // player selection should still work for the current session even if it can't be persisted.
+  }
 };
 
 const closePicker = () => {
@@ -64,17 +86,29 @@ const closePicker = () => {
   currentSlot = null;
 };
 
+const renderPickerTabs = () => {
+  document
+    .querySelectorAll<HTMLButtonElement>(".player-picker-tab")
+    .forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.team === currentTeamFilter);
+    });
+};
+
 const renderPickerList = () => {
   const list = document.getElementById("player-picker-list")!;
   list.innerHTML = "";
 
-  allPlayers.forEach((player) => {
+  const teamPlayers = currentTeamFilter
+    ? allPlayers.filter((player) => player.team === currentTeamFilter)
+    : allPlayers;
+
+  teamPlayers.forEach((player) => {
     const isDisabled =
       (currentSlot === "top" && player.id === bottomPlayer.id) ||
       (currentSlot === "bottom" && player.id === topPlayer.id);
 
     const button = document.createElement("button");
-    button.className = `player-picker-item${isDisabled ? " disabled" : ""}`;
+    button.className = `player-picker-item team-${player.team}${isDisabled ? " disabled" : ""}`;
     button.type = "button";
 
     button.innerHTML = `
@@ -98,15 +132,40 @@ const renderPickerList = () => {
 
     list.appendChild(button);
   });
+
+  // pin the list at PICKER_MIN_ROWS rows worth of height so the picker box
+  // never grows/shrinks between teams with different player counts: fewer
+  // players leave blank space below (min-height), more players scroll
+  // within that height instead of growing the box (max-height). Using
+  // `height` directly instead of min/max would make the grid's implicit
+  // "auto" row tracks shrink to fit rather than scroll. Measure without a
+  // vertical scrollbar first, since one showing up would shrink clientWidth
+  // and skew the computed row height.
+  list.style.overflowY = "hidden";
+  const itemWidth =
+    (list.clientWidth - PICKER_GAP_PX * (PICKER_COLUMNS - 1)) /
+    PICKER_COLUMNS;
+  const rowsHeight = `${itemWidth * PICKER_MIN_ROWS + PICKER_GAP_PX * (PICKER_MIN_ROWS - 1)}px`;
+  list.style.minHeight = rowsHeight;
+  list.style.maxHeight = rowsHeight;
+  list.style.overflowY = "";
+};
+
+const selectTeamFilter = (team: string) => {
+  currentTeamFilter = currentTeamFilter === team ? null : team;
+  renderPickerTabs();
+  renderPickerList();
 };
 
 const openPicker = (slot: "top" | "bottom") => {
   currentSlot = slot;
+  currentTeamFilter = null;
 
   const title = document.getElementById("player-picker-title")!;
   title.textContent =
     slot === "top" ? "Choose first player" : "Choose second player";
 
+  renderPickerTabs();
   renderPickerList();
   document.getElementById("player-picker")!.classList.remove("hidden");
 };
@@ -132,6 +191,12 @@ export const initPlayerSelection = async () => {
   document
     .getElementById("player-card-bottom")!
     .addEventListener("click", () => openPicker("bottom"));
+
+  document
+    .querySelectorAll<HTMLButtonElement>(".player-picker-tab")
+    .forEach((tab) => {
+      tab.addEventListener("click", () => selectTeamFilter(tab.dataset.team!));
+    });
 
   document
     .getElementById("player-picker")!

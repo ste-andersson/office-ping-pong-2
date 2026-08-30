@@ -51,12 +51,16 @@
   );
 }
 
-.player-top .player-card {
-  background: var(--green-dark);
+.team-java .player-card {
+  background: var(--orange-dark);
 }
 
-.player-bottom .player-card {
-  background: var(--orange-mid-bottom);
+.team-core .player-card {
+  background: var(--gray-dark);
+}
+
+.team-data-ai .player-card {
+  background: var(--green-dark);
 }
 
 .score-controls {
@@ -72,12 +76,16 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-.player-top .score-controls {
-  background: var(--green-light);
+.team-java .score-controls {
+  background: var(--orange-light);
 }
 
-.player-bottom .score-controls {
-  background: var(--orange-light);
+.team-core .score-controls {
+  background: var(--gray-light);
+}
+
+.team-data-ai .score-controls {
+  background: var(--green-light);
 }
 
 .btn-minus,
@@ -115,24 +123,34 @@
   filter: brightness(0.82);
 }
 
-.player-top .btn-minus,
-.player-top .btn-plus {
-  background: linear-gradient(
-    to bottom,
-    var(--green-mid-top),
-    var(--green-mid-bottom)
-  );
-  color: #42764c;
-}
-
-.player-bottom .btn-minus,
-.player-bottom .btn-plus {
+.team-java .btn-minus,
+.team-java .btn-plus {
   background: linear-gradient(
     to bottom,
     var(--orange-mid-top),
     var(--orange-mid-bottom)
   );
   color: #a25635;
+}
+
+.team-core .btn-minus,
+.team-core .btn-plus {
+  background: linear-gradient(
+    to bottom,
+    var(--gray-mid-top),
+    var(--gray-mid-bottom)
+  );
+  color: #4a5058;
+}
+
+.team-data-ai .btn-minus,
+.team-data-ai .btn-plus {
+  background: linear-gradient(
+    to bottom,
+    var(--green-mid-top),
+    var(--green-mid-bottom)
+  );
+  color: #42764c;
 }
 
 .btn-plus {

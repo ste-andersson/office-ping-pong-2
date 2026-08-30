@@ -68,13 +68,6 @@
           </div>
         </section>
 
-        <div id="player-picker" class="player-picker hidden">
-          <div class="player-picker-content">
-            <h2 id="player-picker-title">Choose player</h2>
-            <div id="player-picker-list"></div>
-          </div>
-        </div>
-
         <!-- RESULTS VIEW (placeholder) -->
         <section id="results-view" class="view">
           <h2>Results</h2>
@@ -97,6 +90,41 @@
         <button id="prev-view">❮</button>
         <button id="next-view">❯</button>
       </nav>
+
+      <div id="player-picker" class="player-picker hidden">
+        <div class="player-picker-content">
+          <h2 id="player-picker-title">Choose player</h2>
+
+          <div class="player-picker-tabs">
+            <button
+              type="button"
+              class="player-picker-tab team-java"
+              data-team="java"
+            >
+              <img src="/assets/team-java.png" alt="" />
+              <span>Java</span>
+            </button>
+            <button
+              type="button"
+              class="player-picker-tab team-core"
+              data-team="core"
+            >
+              <img src="/assets/team-salt-core.png" alt="" />
+              <span>SALT Core</span>
+            </button>
+            <button
+              type="button"
+              class="player-picker-tab team-data-ai"
+              data-team="data-ai"
+            >
+              <img src="/assets/team-data-ai.png" alt="" />
+              <span>Data &amp; AI</span>
+            </button>
+          </div>
+
+          <div id="player-picker-list"></div>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
