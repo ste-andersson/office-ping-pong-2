@@ -2,7 +2,8 @@ import { getSelectedPlayerIds } from "./playerSelection";
 import { getScores, resetScores } from "./scoreControls";
 import { API_BASE_URL } from "./api";
 import { loadResultsView } from "./results-view";
-import { loadStandingsView } from "./standings-view";
+import { loadTeamStandingsView } from "./team-standings-view";
+import { loadPlayerStandingsView } from "./player-standings-view";
 import { setJustSubmitted } from "./viewNavigation";
 
 const submitMatch = async (): Promise<void> => {
@@ -24,7 +25,8 @@ const submitMatch = async (): Promise<void> => {
     throw new Error("Failed to submit match");
   }
   await loadResultsView();
-  await loadStandingsView();
+  await loadTeamStandingsView();
+  await loadPlayerStandingsView();
 };
 
 export const initSubmitMatch = (goToView: (index: number) => void): void => {

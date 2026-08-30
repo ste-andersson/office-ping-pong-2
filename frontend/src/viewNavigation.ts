@@ -1,5 +1,6 @@
 import { loadResultsView } from "./results-view";
-import { loadStandingsView } from "./standings-view";
+import { loadTeamStandingsView } from "./team-standings-view";
+import { loadPlayerStandingsView } from "./player-standings-view";
 
 let justSubmitted = false;
 
@@ -11,7 +12,8 @@ export const initViewNavigation = () => {
   const views: HTMLElement[] = [
     document.getElementById("report-view") as HTMLElement,
     document.getElementById("results-view") as HTMLElement,
-    document.getElementById("standings-view") as HTMLElement,
+    document.getElementById("team-standings-view") as HTMLElement,
+    document.getElementById("player-standings-view") as HTMLElement,
   ];
 
   const prevButton = document.getElementById("prev-view") as HTMLButtonElement;
@@ -90,7 +92,8 @@ export const initViewNavigation = () => {
       isAnimating = false;
 
       if (nextIndex === 1 && !justSubmitted) loadResultsView();
-      if (nextIndex === 2) loadStandingsView();
+      if (nextIndex === 2) loadTeamStandingsView();
+      if (nextIndex === 3) loadPlayerStandingsView();
     };
 
     currentView.addEventListener("transitionend", onTransitionEnd);

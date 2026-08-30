@@ -1,0 +1,189 @@
+#team-standings-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 8px 0;
+  background: var(--bg-app);
+}
+
+#team-standings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 0 80px;
+}
+
+.team-standing-row {
+  display: grid;
+  grid-template-columns: 40px 72px 1fr 56px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.team-standing-rank {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-align: center;
+  color: #aaa;
+}
+
+.rank-gold .team-standing-rank {
+  color: #c9a227;
+}
+.rank-silver .team-standing-rank {
+  color: #8a9aaa;
+}
+.rank-bronze .team-standing-rank {
+  color: #a0694a;
+}
+
+.team-standing-card {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 3px solid transparent;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-gold .team-standing-card {
+  border-color: #a87c10;
+  background: linear-gradient(145deg, #f5e27a, #c9a227, #f5e27a, #a87c10);
+}
+.rank-silver .team-standing-card {
+  border-color: #6a8090;
+  background: linear-gradient(145deg, #e8e8e8, #9aabb5, #e8e8e8, #6a8090);
+}
+.rank-bronze .team-standing-card {
+  border-color: #7a4a2a;
+  background: linear-gradient(145deg, #d4956a, #a0694a, #d4956a, #7a4a2a);
+}
+
+/* the team logo, recolored to a solid tone via mask so it reads as another
+   shade of the same medal metal instead of clashing with the team's own
+   brand color (orange/gray/green) */
+.team-standing-logo {
+  width: 68%;
+  height: 68%;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.team-standing-logo.team-java {
+  -webkit-mask-image: url("/assets/team-java.png");
+  mask-image: url("/assets/team-java.png");
+}
+
+.team-standing-logo.team-core {
+  -webkit-mask-image: url("/assets/team-salt-core.png");
+  mask-image: url("/assets/team-salt-core.png");
+}
+
+.team-standing-logo.team-data-ai {
+  -webkit-mask-image: url("/assets/team-data-ai.png");
+  mask-image: url("/assets/team-data-ai.png");
+}
+
+.rank-gold .team-standing-logo {
+  background-color: #6b4e0c;
+}
+.rank-silver .team-standing-logo {
+  background-color: #45525c;
+}
+.rank-bronze .team-standing-logo {
+  background-color: #522f1a;
+}
+
+.team-standing-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.team-standing-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-standing-meta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #999;
+}
+
+.team-standing-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-standing-score-value {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+  color: #111;
+}
+
+.team-standing-score-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 420px) {
+  .team-standing-row {
+    grid-template-columns: 32px 60px 1fr 48px;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .team-standing-card {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+  }
+
+  .team-standing-rank {
+    font-size: 1.2rem;
+  }
+
+  .team-standing-name {
+    font-size: 0.9rem;
+  }
+
+  .team-standing-meta {
+    font-size: 0.72rem;
+  }
+
+  .team-standing-score-value {
+    font-size: 1.6rem;
+  }
+
+  .team-standing-score-label {
+    font-size: 0.62rem;
+  }
+}

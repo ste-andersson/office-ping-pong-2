@@ -10,8 +10,10 @@ type Standing = {
   winRate: number;
 };
 
-export const loadStandingsView = async () => {
-  const container = document.getElementById("standings-list") as HTMLDivElement;
+export const loadPlayerStandingsView = async () => {
+  const container = document.getElementById(
+    "player-standings-list",
+  ) as HTMLDivElement;
 
   const response = await fetch(`${API_BASE_URL}/api/matches/standings`, { cache: "no-store" });
   const standings: Standing[] = await response.json();

@@ -31,4 +31,9 @@ public class MatchController {
     public ResponseEntity<List<StandingsDto>> getStandings() {
         return ResponseEntity.ok(matchService.getStandings());
     }
+
+    @GetMapping(path = {"/team-standings/", "/team-standings"})
+    public ResponseEntity<List<TeamStandingsDto>> getTeamStandings() {
+        return ResponseEntity.ok(matchService.getTeamStandings());
+    }
 }

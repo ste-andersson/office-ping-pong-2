@@ -86,4 +86,37 @@ public class MatchService {
                 .toList();
     }
 
+    public List<TeamStandingsDto> getTeamStandings() {
+        List<MatchEntity> matches = matchRepository.findAll();
+        List<String> teams = List.of("java", "core", "data-ai");
+
+        return teams.stream()
+                .map(team -> {
+                    long matchesPlayed = matches.stream()
+                            .filter(m ->
+                                    team.equals(m.getTopPlayer().getTeam()) ||
+                                    team.equals(m.getBottomPlayer().getTeam()))
+                            .count();
+
+                    long wins = matches.stream()
+                            .filter(m ->
+                                    (team.equals(m.getTopPlayer().getTeam()) &&
+                                            m.getTopPlayerScore() > m.getBottomPlayerScore()) ||
+                                            (team.equals(m.getBottomPlayer().getTeam()) &&
+                                                    m.getBottomPlayerScore() > m.getTopPlayerScore()))
+                            .count();
+
+                    long winRate = matchesPlayed == 0
+                            ? 0
+                            : Math.round((wins * 100.0) / matchesPlayed);
+
+                    return new TeamStandingsDto(team, matchesPlayed, wins, winRate);
+                })
+                .sorted(Comparator
+                        .comparingLong(TeamStandingsDto::wins).reversed()
+                        .thenComparingLong(TeamStandingsDto::winRate).reversed()
+                        .thenComparingLong(TeamStandingsDto::matchesPlayed).reversed())
+                .toList();
+    }
+
 }

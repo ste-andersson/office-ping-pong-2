@@ -156,7 +156,8 @@ main {
 }
 
 #results-view h2,
-#standings-view h2 {
+#team-standings-view h2,
+#player-standings-view h2 {
   text-align: center;
   font-size: 1.8rem;
   margin-bottom: 16px;
