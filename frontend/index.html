@@ -22,41 +22,43 @@
       <main>
         <!-- REPORT VIEW -->
         <section id="report-view" class="view">
-          <!-- Player 1 -->
-          <div class="player player-top">
-            <div id="player-card-top" class="player-card">
-              <img
-                id="player-avatar-top"
-                class="player-avatar"
-                src="/assets/generic-avatar.png"
-                alt="Generic avatar"
-              />
-              <span id="player-name-top" class="player-name">PLAYER 1</span>
+          <div class="players-row">
+            <!-- Player 1 -->
+            <div class="player player-top">
+              <div id="player-card-top" class="player-card">
+                <img
+                  id="player-avatar-top"
+                  class="player-avatar"
+                  src="/assets/generic-avatar.png"
+                  alt="Generic avatar"
+                />
+                <span id="player-name-top" class="player-name">PLAYER 1</span>
+              </div>
+
+              <div class="score-controls">
+                <button id="p1-plus" class="btn-plus">+</button>
+                <span class="score" id="score-p1">0</span>
+                <button id="p1-minus" class="btn-minus">-</button>
+              </div>
             </div>
 
-            <div class="score-controls">
-              <button id="p1-minus" class="btn-minus">-</button>
-              <span class="score" id="score-p1">0</span>
-              <button id="p1-plus" class="btn-plus">+</button>
-            </div>
-          </div>
+            <!-- Player 2 -->
+            <div class="player player-bottom">
+              <div id="player-card-bottom" class="player-card">
+                <img
+                  id="player-avatar-bottom"
+                  class="player-avatar"
+                  src="/assets/generic-avatar.png"
+                  alt="Generic avatar"
+                />
+                <span id="player-name-bottom" class="player-name">PLAYER 2</span>
+              </div>
 
-          <!-- Player 2 -->
-          <div class="player player-bottom">
-            <div id="player-card-bottom" class="player-card">
-              <img
-                id="player-avatar-bottom"
-                class="player-avatar"
-                src="/assets/generic-avatar.png"
-                alt="Generic avatar"
-              />
-              <span id="player-name-bottom" class="player-name">PLAYER 2</span>
-            </div>
-
-            <div class="score-controls">
-              <button id="p2-minus" class="btn-minus">-</button>
-              <span class="score" id="score-p2">0</span>
-              <button id="p2-plus" class="btn-plus">+</button>
+              <div class="score-controls">
+                <button id="p2-plus" class="btn-plus">+</button>
+                <span class="score" id="score-p2">0</span>
+                <button id="p2-minus" class="btn-minus">-</button>
+              </div>
             </div>
           </div>
 
