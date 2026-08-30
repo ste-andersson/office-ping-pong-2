@@ -132,7 +132,8 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  border: none;
+  border: 3px solid transparent;
+  box-sizing: border-box;
   border-radius: 14px;
   overflow: hidden;
   padding: 0;
@@ -145,15 +146,30 @@
 }
 
 .player-picker-item.team-java {
-  background: var(--orange-dark);
+  border-color: var(--orange-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--orange-mid-top),
+    var(--orange-mid-bottom)
+  );
 }
 
 .player-picker-item.team-core {
-  background: var(--gray-dark);
+  border-color: var(--gray-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--gray-mid-top),
+    var(--gray-mid-bottom)
+  );
 }
 
 .player-picker-item.team-data-ai {
-  background: var(--green-dark);
+  border-color: var(--green-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--green-mid-top),
+    var(--green-mid-bottom)
+  );
 }
 
 .player-picker-item:hover {

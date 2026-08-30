@@ -78,6 +78,7 @@ public class MatchService {
                             winRate
                     );
                 })
+                .filter(standing -> standing.matchesPlayed() > 0)
                 .sorted(Comparator
                         .comparingLong(StandingsDto::wins).reversed()
                         .thenComparingLong(StandingsDto::winRate).reversed()

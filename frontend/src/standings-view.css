@@ -50,18 +50,30 @@
 }
 
 .standings-player-card.team-java {
-  background: var(--orange-dark);
   border-color: var(--orange-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--orange-mid-top),
+    var(--orange-mid-bottom)
+  );
 }
 
 .standings-player-card.team-core {
-  background: var(--gray-dark);
   border-color: var(--gray-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--gray-mid-top),
+    var(--gray-mid-bottom)
+  );
 }
 
 .standings-player-card.team-data-ai {
-  background: var(--green-dark);
   border-color: var(--green-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--green-mid-top),
+    var(--green-mid-bottom)
+  );
 }
 
 .standings-avatar {

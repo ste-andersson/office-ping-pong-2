@@ -61,19 +61,36 @@
   border-radius: 14px;
   overflow: hidden;
   flex-shrink: 0;
+  border: 3px solid transparent;
+  box-sizing: border-box;
   background: #d8d8d8;
 }
 
 .match-player.team-java {
-  background: var(--orange-dark);
+  border-color: var(--orange-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--orange-mid-top),
+    var(--orange-mid-bottom)
+  );
 }
 
 .match-player.team-core {
-  background: var(--gray-dark);
+  border-color: var(--gray-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--gray-mid-top),
+    var(--gray-mid-bottom)
+  );
 }
 
 .match-player.team-data-ai {
-  background: var(--green-dark);
+  border-color: var(--green-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--green-mid-top),
+    var(--green-mid-bottom)
+  );
 }
 
 .match-avatar {

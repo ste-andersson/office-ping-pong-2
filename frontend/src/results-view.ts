@@ -16,7 +16,7 @@ type Match = {
 const formatDateHeading = (dateString: string): string => {
   const date = new Date(dateString);
 
-  return date.toLocaleDateString("sv-SE", {
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",

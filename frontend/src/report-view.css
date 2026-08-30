@@ -52,15 +52,30 @@
 }
 
 .team-java .player-card {
-  background: var(--orange-dark);
+  border-color: var(--orange-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--orange-mid-top),
+    var(--orange-mid-bottom)
+  );
 }
 
 .team-core .player-card {
-  background: var(--gray-dark);
+  border-color: var(--gray-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--gray-mid-top),
+    var(--gray-mid-bottom)
+  );
 }
 
 .team-data-ai .player-card {
-  background: var(--green-dark);
+  border-color: var(--green-dark);
+  background: linear-gradient(
+    to bottom,
+    var(--green-mid-top),
+    var(--green-mid-bottom)
+  );
 }
 
 .score-controls {
