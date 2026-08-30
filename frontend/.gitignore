@@ -17,6 +17,9 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+# Original (unoptimized) assets kept locally only
+public/assets/original
 *.suo
 *.ntvs*
 *.njsproj
