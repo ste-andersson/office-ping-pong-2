@@ -14,6 +14,12 @@ const PICKER_MIN_ROWS = 4;
 // fraction of an extra row peeking in at the bottom, hinting that the list scrolls
 const PICKER_PEEK_ROW_FRACTION = 0.35;
 
+// preferred team order for a first-time user's default second player: picks
+// the most-preferred team (that isn't the first player's team) whose colors
+// pair best with the others, rather than whichever team happens to sort
+// first by player id
+const DEFAULT_OPPONENT_TEAM_PREFERENCE = ["data-ai", "core", "java"];
+
 let allPlayers: Player[] = [];
 let topPlayer: Player;
 let bottomPlayer: Player;
@@ -39,9 +45,15 @@ const getSelectedPlayers = (players: Player[]) => {
     return { top, bottom };
   }
 
+  const defaultTop = players[0];
+  const defaultBottom =
+    DEFAULT_OPPONENT_TEAM_PREFERENCE.filter((team) => team !== defaultTop.team)
+      .map((team) => players.find((p) => p.team === team))
+      .find((p): p is Player => p !== undefined) ?? players[1];
+
   return {
-    top: players[0],
-    bottom: players[1],
+    top: defaultTop,
+    bottom: defaultBottom,
   };
 };
 
