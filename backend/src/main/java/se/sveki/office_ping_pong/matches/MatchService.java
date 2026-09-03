@@ -101,11 +101,7 @@ public class MatchService {
                             .count();
 
                     long wins = matches.stream()
-                            .filter(m ->
-                                    (team.equals(m.getTopPlayer().getTeam()) &&
-                                            m.getTopPlayerScore() > m.getBottomPlayerScore()) ||
-                                            (team.equals(m.getBottomPlayer().getTeam()) &&
-                                                    m.getBottomPlayerScore() > m.getTopPlayerScore()))
+                            .filter(m -> isTeamWinner(m, team))
                             .count();
 
                     long winRate = matchesPlayed == 0
@@ -119,6 +115,88 @@ public class MatchService {
                         .thenComparingLong(TeamStandingsDto::winRate).reversed()
                         .thenComparingLong(TeamStandingsDto::matchesPlayed).reversed())
                 .toList();
+    }
+
+    public TeamDetailsDto getTeamDetails(String team) {
+        List<String> teams = List.of("java", "core", "data-ai");
+        List<MatchEntity> allMatches = matchRepository.findAll();
+        List<TeamStandingsDto> teamStandings = getTeamStandings();
+
+        int rank = 1;
+        for (TeamStandingsDto standing : teamStandings) {
+            if (standing.team().equals(team)) {
+                break;
+            }
+            rank++;
+        }
+
+        List<MatchEntity> teamMatches = allMatches.stream()
+                .filter(m -> team.equals(m.getTopPlayer().getTeam()) || team.equals(m.getBottomPlayer().getTeam()))
+                .sorted(Comparator.comparing(MatchEntity::getPlayedAt).reversed())
+                .toList();
+
+        long matchesPlayed = teamMatches.size();
+        long wins = teamMatches.stream().filter(m -> isTeamWinner(m, team)).count();
+        long winRate = matchesPlayed == 0
+                ? 0
+                : Math.round((wins * 100.0) / matchesPlayed);
+        long totalPoints = teamMatches.stream()
+                .mapToLong(m -> m.getTopPlayerScore() + m.getBottomPlayerScore())
+                .sum();
+
+        List<String> form = teamMatches.stream()
+                .sorted(Comparator.comparing(MatchEntity::getPlayedAt))
+                .map(m -> isTeamWinner(m, team) ? "W" : "L")
+                .toList();
+        List<String> lastFive = form.size() > 5 ? form.subList(form.size() - 5, form.size()) : form;
+
+        // matchup against every team, including this one: two players from the
+        // same team can play each other, and one of them winning still counts
+        // as a win for that team in this bucket
+        List<TeamMatchupDto> matchups = teams.stream()
+                .map(opponent -> {
+                    List<MatchEntity> matchupMatches = allMatches.stream()
+                            .filter(m ->
+                                    (team.equals(m.getTopPlayer().getTeam()) && opponent.equals(m.getBottomPlayer().getTeam())) ||
+                                            (team.equals(m.getBottomPlayer().getTeam()) && opponent.equals(m.getTopPlayer().getTeam())))
+                            .toList();
+
+                    long matchupPlayed = matchupMatches.size();
+                    long matchupWins = matchupMatches.stream().filter(m -> isTeamWinner(m, team)).count();
+                    long matchupWinRate = matchupPlayed == 0
+                            ? 0
+                            : Math.round((matchupWins * 100.0) / matchupPlayed);
+
+                    return new TeamMatchupDto(opponent, matchupPlayed, matchupWins, matchupWinRate);
+                })
+                .toList();
+
+        List<MatchResponseDto> matches = teamMatches.stream()
+                .map(m -> new MatchResponseDto(
+                        m.getId(),
+                        m.getTopPlayer().getName(),
+                        m.getBottomPlayer().getName(),
+                        m.getTopPlayer().getAvatar(),
+                        m.getBottomPlayer().getAvatar(),
+                        m.getTopPlayer().getTeam(),
+                        m.getBottomPlayer().getTeam(),
+                        m.getTopPlayerScore(),
+                        m.getBottomPlayerScore(),
+                        m.getPlayedAt()
+                ))
+                .toList();
+
+        return new TeamDetailsDto(
+                team,
+                rank,
+                matchesPlayed,
+                wins,
+                winRate,
+                totalPoints,
+                lastFive,
+                matchups,
+                matches
+        );
     }
 
     public MatchDetailsDto getMatchDetails(long matchId) {
@@ -279,6 +357,14 @@ public class MatchService {
         return isTop
                 ? match.getTopPlayerScore() > match.getBottomPlayerScore()
                 : match.getBottomPlayerScore() > match.getTopPlayerScore();
+    }
+
+    private boolean isTeamWinner(MatchEntity match, String team) {
+        boolean topWinsForTeam = team.equals(match.getTopPlayer().getTeam())
+                && match.getTopPlayerScore() > match.getBottomPlayerScore();
+        boolean bottomWinsForTeam = team.equals(match.getBottomPlayer().getTeam())
+                && match.getBottomPlayerScore() > match.getTopPlayerScore();
+        return topWinsForTeam || bottomWinsForTeam;
     }
 
 }

@@ -42,6 +42,11 @@ public class MatchController {
         return ResponseEntity.ok(matchService.getPlayerDetails(id));
     }
 
+    @GetMapping("/teams/{team}")
+    public ResponseEntity<TeamDetailsDto> getTeamDetails(@PathVariable String team) {
+        return ResponseEntity.ok(matchService.getTeamDetails(team));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MatchDetailsDto> getMatchDetails(@PathVariable long id) {
         return ResponseEntity.ok(matchService.getMatchDetails(id));

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api";
+import { openTeamDetails } from "./team-details";
 
 type TeamStanding = {
   team: string;
@@ -50,6 +51,8 @@ export const loadTeamStandingsView = async () => {
     <span class="team-standing-score-label">Wins</span>
   </div>
 `;
+
+    row.addEventListener("click", () => openTeamDetails(standing.team));
 
     container.appendChild(row);
   });

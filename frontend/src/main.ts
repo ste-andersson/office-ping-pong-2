@@ -7,6 +7,7 @@ import "./team-standings-view.css";
 import "./player-standings-view.css";
 import "./match-details.css";
 import "./player-details.css";
+import "./team-details.css";
 
 import { initViewNavigation } from "./viewNavigation";
 import { initScoreControls } from "./scoreControls";
@@ -17,6 +18,7 @@ import { loadTeamStandingsView } from "./team-standings-view";
 import { loadPlayerStandingsView } from "./player-standings-view";
 import { initMatchDetails } from "./match-details";
 import { initPlayerDetails, refreshPlayerDetailsIfOpen } from "./player-details";
+import { initTeamDetails, refreshTeamDetailsIfOpen } from "./team-details";
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js');
@@ -28,11 +30,13 @@ const initApp = async () => {
   await initPlayerSelection();
   initSubmitMatch(goToView);
   initPlayerDetails();
+  initTeamDetails();
   initMatchDetails(() => {
     loadResultsView();
     loadTeamStandingsView();
     loadPlayerStandingsView();
     refreshPlayerDetailsIfOpen();
+    refreshTeamDetailsIfOpen();
   });
   loadResultsView();
   loadTeamStandingsView();
