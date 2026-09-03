@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api";
+import { openMatchDetails } from "./match-details";
 
 type Match = {
   id: number;
@@ -91,6 +92,8 @@ export const loadResultsView = async () => {
           <span class="match-player-name">${match.bottomPlayerName}</span>
         </div>
       `;
+
+      card.addEventListener("click", () => openMatchDetails(match.id));
 
       container.appendChild(card);
     });

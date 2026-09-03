@@ -36,4 +36,15 @@ public class MatchController {
     public ResponseEntity<List<TeamStandingsDto>> getTeamStandings() {
         return ResponseEntity.ok(matchService.getTeamStandings());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MatchDetailsDto> getMatchDetails(@PathVariable long id) {
+        return ResponseEntity.ok(matchService.getMatchDetails(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMatch(@PathVariable long id) {
+        boolean deleted = matchService.deleteMatchIfRecent(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.status(409).build();
+    }
 }
