@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api";
+import { openPlayerDetails } from "./player-details";
 
 type Standing = {
   playerId: number;
@@ -48,6 +49,8 @@ export const loadPlayerStandingsView = async () => {
     <span class="standings-score-label">Wins</span>
   </div>
 `;
+
+    row.addEventListener("click", () => openPlayerDetails(standing.playerId));
 
     container.appendChild(row);
   });

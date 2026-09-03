@@ -146,6 +146,65 @@ public class MatchService {
         );
     }
 
+    public PlayerDetailsDto getPlayerDetails(long playerId) {
+        PlayerEntity player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new IllegalArgumentException("Player not found"));
+
+        List<MatchEntity> allMatches = matchRepository.findAll();
+        List<StandingsDto> standings = getStandings();
+        PlayerMatchInfoDto info = buildPlayerMatchInfo(player, allMatches, standings);
+
+        List<MatchEntity> playerMatches = allMatches.stream()
+                .filter(m -> m.getTopPlayer().equals(player) || m.getBottomPlayer().equals(player))
+                .sorted(Comparator.comparing(MatchEntity::getPlayedAt).reversed())
+                .toList();
+
+        long matchesPlayed = playerMatches.size();
+        long wins = playerMatches.stream().filter(m -> isWinner(m, player)).count();
+        long winRate = matchesPlayed == 0
+                ? 0
+                : Math.round((wins * 100.0) / matchesPlayed);
+        long totalPoints = playerMatches.stream()
+                .mapToLong(m -> m.getTopPlayerScore() + m.getBottomPlayerScore())
+                .sum();
+
+        List<PlayerMatchSummaryDto> matches = playerMatches.stream()
+                .map(m -> toPlayerMatchSummary(m, player))
+                .toList();
+
+        return new PlayerDetailsDto(
+                info.playerId(),
+                info.name(),
+                info.avatar(),
+                info.team(),
+                info.rank(),
+                matchesPlayed,
+                wins,
+                winRate,
+                totalPoints,
+                info.form(),
+                matches
+        );
+    }
+
+    private PlayerMatchSummaryDto toPlayerMatchSummary(MatchEntity match, PlayerEntity player) {
+        boolean isTop = match.getTopPlayer().equals(player);
+        PlayerEntity opponent = isTop ? match.getBottomPlayer() : match.getTopPlayer();
+        int playerScore = isTop ? match.getTopPlayerScore() : match.getBottomPlayerScore();
+        int opponentScore = isTop ? match.getBottomPlayerScore() : match.getTopPlayerScore();
+
+        return new PlayerMatchSummaryDto(
+                match.getId(),
+                match.getPlayedAt(),
+                opponent.getId(),
+                opponent.getName(),
+                opponent.getAvatar(),
+                opponent.getTeam(),
+                playerScore,
+                opponentScore
+        );
+    }
+
     public boolean deleteMatchIfRecent(long matchId) {
         MatchEntity match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new IllegalArgumentException("Match not found"));
