@@ -8,6 +8,8 @@ import "./player-standings-view.css";
 import "./match-details.css";
 import "./player-details.css";
 import "./team-details.css";
+import "./toggle-switch.css";
+import "./arcade-view.css";
 
 import { initViewNavigation } from "./viewNavigation";
 import { initScoreControls } from "./scoreControls";
@@ -19,6 +21,8 @@ import { loadPlayerStandingsView } from "./player-standings-view";
 import { initMatchDetails } from "./match-details";
 import { initPlayerDetails, refreshPlayerDetailsIfOpen } from "./player-details";
 import { initTeamDetails, refreshTeamDetailsIfOpen } from "./team-details";
+import { initArcadeMode } from "./arcade-mode";
+import { initSound } from "./sound";
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js');
@@ -29,6 +33,8 @@ const initApp = async () => {
   const { goToView } = initViewNavigation();
   await initPlayerSelection();
   initSubmitMatch(goToView);
+  initArcadeMode(goToView);
+  initSound();
   initPlayerDetails();
   initTeamDetails();
   initMatchDetails(() => {

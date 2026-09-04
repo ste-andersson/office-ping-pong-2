@@ -20,6 +20,49 @@
 
       <!-- Main content -->
       <main>
+        <!-- ARCADE MODE VIEW -->
+        <section id="arcade-view" class="view">
+          <h2>Arcade Mode</h2>
+
+          <div class="arcade-toggle-row">
+            <span class="arcade-toggle-label">Arcade Mode</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="arcade-mode-toggle" />
+              <span class="toggle-switch-track"></span>
+            </label>
+          </div>
+
+          <div id="arcade-sub-toggles" class="arcade-sub-toggles hidden">
+            <div class="arcade-toggle-row">
+              <span class="arcade-toggle-label">Music</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="arcade-music-toggle" />
+                <span class="toggle-switch-track"></span>
+              </label>
+            </div>
+            <div class="arcade-toggle-row">
+              <span class="arcade-toggle-label">SFX</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="arcade-sfx-toggle" />
+                <span class="toggle-switch-track"></span>
+              </label>
+            </div>
+          </div>
+
+          <form id="add-player-form" class="add-player-form">
+            <h3 class="add-player-heading">Add a player</h3>
+            <input
+              type="text"
+              id="add-player-name"
+              class="add-player-input"
+              placeholder="Player name"
+              maxlength="40"
+              required
+            />
+            <button type="submit" id="add-player-submit">ADD PLAYER</button>
+          </form>
+        </section>
+
         <!-- REPORT VIEW -->
         <section id="report-view" class="view">
           <div class="players-row">
@@ -29,7 +72,7 @@
                 <img
                   id="player-avatar-top"
                   class="player-avatar"
-                  src="/assets/generic-avatar.png"
+                  src="/assets/unknown-player-avatar.png"
                   alt="Generic avatar"
                 />
                 <span id="player-name-top" class="player-name">PLAYER 1</span>
@@ -48,7 +91,7 @@
                 <img
                   id="player-avatar-bottom"
                   class="player-avatar"
-                  src="/assets/generic-avatar.png"
+                  src="/assets/unknown-player-avatar.png"
                   alt="Generic avatar"
                 />
                 <span id="player-name-bottom" class="player-name">PLAYER 2</span>
@@ -118,7 +161,7 @@
               data-team="core"
             >
               <img src="/assets/team-salt-core.png" alt="" />
-              <span>SALT Core</span>
+              <span>Core &amp; Alumni</span>
             </button>
             <button
               type="button"

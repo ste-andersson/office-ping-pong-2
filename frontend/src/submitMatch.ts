@@ -1,10 +1,11 @@
-import { getSelectedPlayerIds } from "./playerSelection";
+import { getSelectedPlayerIds, getCurrentPlayers } from "./playerSelection";
 import { getScores, resetScores } from "./scoreControls";
 import { API_BASE_URL } from "./api";
 import { loadResultsView } from "./results-view";
 import { loadTeamStandingsView } from "./team-standings-view";
 import { loadPlayerStandingsView } from "./player-standings-view";
 import { setJustSubmitted } from "./viewNavigation";
+import { playMatchWinAnnouncement } from "./sound";
 
 const submitMatch = async (): Promise<void> => {
   const { topPlayerId, bottomPlayerId } = getSelectedPlayerIds();
@@ -24,6 +25,13 @@ const submitMatch = async (): Promise<void> => {
   if (!response.ok) {
     throw new Error("Failed to submit match");
   }
+
+  if (topPlayerScore !== bottomPlayerScore) {
+    const { top, bottom } = getCurrentPlayers();
+    const winnerName = topPlayerScore > bottomPlayerScore ? top.name : bottom.name;
+    playMatchWinAnnouncement(winnerName);
+  }
+
   await loadResultsView();
   await loadTeamStandingsView();
   await loadPlayerStandingsView();
@@ -50,7 +58,7 @@ export const initSubmitMatch = (goToView: (index: number) => void): void => {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setJustSubmitted(true);
-      goToView(1);
+      goToView(2);
       setTimeout(() => resetScores(), 350);
       setTimeout(() => {
         submitButton.disabled = false;

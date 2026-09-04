@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "./api";
 import { openMatchDetails } from "./match-details";
+import { TEAM_LABELS } from "./teams";
 
 type TeamMatchup = {
   opponentTeam: string;
@@ -31,12 +32,6 @@ type TeamDetails = {
   form: string[];
   matchups: TeamMatchup[];
   matches: TeamMatch[];
-};
-
-const TEAM_LABELS: Record<string, string> = {
-  java: "Java",
-  core: "SALT Core",
-  "data-ai": "Data & AI",
 };
 
 let currentTeam: string | null = null;

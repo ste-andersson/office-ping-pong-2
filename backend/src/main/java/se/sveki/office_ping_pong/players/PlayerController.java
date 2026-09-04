@@ -29,4 +29,9 @@ public class PlayerController {
     ResponseEntity<List<PlayerResponseDto>> getAllPlayers() {
         return ResponseEntity.ok(playerService.getAllPlayers());
     }
+
+    @PostMapping(path = {"/", ""})
+    ResponseEntity<PlayerResponseDto> createPlayer(@RequestBody CreatePlayerDto dto) {
+        return ResponseEntity.status(201).body(playerService.createPlayer(dto));
+    }
 }

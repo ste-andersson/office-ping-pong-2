@@ -1,17 +1,12 @@
 import { API_BASE_URL } from "./api";
 import { openTeamDetails } from "./team-details";
+import { TEAM_LABELS } from "./teams";
 
 type TeamStanding = {
   team: string;
   matchesPlayed: number;
   wins: number;
   winRate: number;
-};
-
-const TEAM_LABELS: Record<string, string> = {
-  java: "Java",
-  core: "SALT Core",
-  "data-ai": "Data & AI",
 };
 
 export const loadTeamStandingsView = async () => {

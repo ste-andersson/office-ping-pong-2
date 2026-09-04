@@ -1,0 +1,107 @@
+#arcade-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 8px calc(16px + env(safe-area-inset-bottom));
+  background: var(--bg-app);
+}
+
+.arcade-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: white;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-soft);
+}
+
+.arcade-toggle-label {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.arcade-sub-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 14px;
+  border-left: 3px solid var(--border-soft);
+}
+
+.arcade-sub-toggles.hidden {
+  display: none;
+}
+
+.add-player-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: white;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-soft);
+  margin-top: auto;
+}
+
+.add-player-heading {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.add-player-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 2px solid var(--border-soft);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-dark);
+  background: var(--bg-app);
+}
+
+.add-player-input:focus {
+  outline: none;
+  border-color: var(--orange-dark);
+}
+
+#add-player-submit {
+  width: 100%;
+  min-height: 56px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(to bottom, #d37c56, #c96f48);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.08),
+    var(--shadow-button);
+  transition:
+    transform 0.08s ease,
+    filter 0.12s ease;
+}
+
+#add-player-submit:hover {
+  filter: brightness(1.03);
+}
+
+#add-player-submit:active {
+  transform: scale(0.985);
+}
+
+#add-player-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

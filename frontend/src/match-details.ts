@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api";
+import { TEAM_LABELS } from "./teams";
 
 type PlayerMatchInfo = {
   playerId: number;
@@ -31,12 +32,6 @@ type MatchDetails = {
   bottomPlayerScore: number;
   headToHead: HeadToHead;
   deletable: boolean;
-};
-
-const TEAM_LABELS: Record<string, string> = {
-  java: "Java",
-  core: "SALT Core",
-  "data-ai": "Data & AI",
 };
 
 let currentMatchId: number | null = null;

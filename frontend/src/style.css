@@ -155,6 +155,7 @@ main {
   right: 8px;
 }
 
+#arcade-view h2,
 #results-view h2,
 #team-standings-view h2,
 #player-standings-view h2 {

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api.ts";
+import { playPlayerName } from "./sound";
 
 type Player = {
   id: number;
@@ -150,6 +151,7 @@ const renderPickerList = () => {
 
         renderPlayers(topPlayer, bottomPlayer);
         savePlayers(topPlayer, bottomPlayer);
+        playPlayerName(player.name);
         closePicker();
       });
     }
@@ -238,9 +240,28 @@ export const initPlayerSelection = async () => {
     });
 };
 
+export const refreshPlayers = async (selectAsTopId?: number) => {
+  allPlayers = await fetchPlayers();
+
+  if (selectAsTopId !== undefined) {
+    const player = allPlayers.find((p) => p.id === selectAsTopId);
+    if (player) {
+      topPlayer = player;
+      renderPlayers(topPlayer, bottomPlayer);
+      savePlayers(topPlayer, bottomPlayer);
+    }
+  }
+
+  renderPickerList();
+};
+
 export const getSelectedPlayerIds = () => {
   return {
     topPlayerId: topPlayer.id,
     bottomPlayerId: bottomPlayer.id,
   };
+};
+
+export const getCurrentPlayers = () => {
+  return { top: topPlayer, bottom: bottomPlayer };
 };

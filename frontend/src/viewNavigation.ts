@@ -1,6 +1,7 @@
 import { loadResultsView } from "./results-view";
 import { loadTeamStandingsView } from "./team-standings-view";
 import { loadPlayerStandingsView } from "./player-standings-view";
+import { playSfx } from "./sound";
 
 let justSubmitted = false;
 
@@ -10,6 +11,7 @@ export const setJustSubmitted = (value: boolean) => {
 
 export const initViewNavigation = () => {
   const views: HTMLElement[] = [
+    document.getElementById("arcade-view") as HTMLElement,
     document.getElementById("report-view") as HTMLElement,
     document.getElementById("results-view") as HTMLElement,
     document.getElementById("team-standings-view") as HTMLElement,
@@ -19,7 +21,9 @@ export const initViewNavigation = () => {
   const prevButton = document.getElementById("prev-view") as HTMLButtonElement;
   const nextButton = document.getElementById("next-view") as HTMLButtonElement;
 
-  let currentIndex = 0;
+  // Report (index 1) stays the screen the app opens on; Arcade Mode (index 0)
+  // is reached only by going left from Report, not by default.
+  let currentIndex = 1;
   let isAnimating = false;
 
   const clearViewClasses = (view: HTMLElement) => {
@@ -91,19 +95,21 @@ export const initViewNavigation = () => {
       updateNavButtons();
       isAnimating = false;
 
-      if (nextIndex === 1 && !justSubmitted) loadResultsView();
-      if (nextIndex === 2) loadTeamStandingsView();
-      if (nextIndex === 3) loadPlayerStandingsView();
+      if (nextIndex === 2 && !justSubmitted) loadResultsView();
+      if (nextIndex === 3) loadTeamStandingsView();
+      if (nextIndex === 4) loadPlayerStandingsView();
     };
 
     currentView.addEventListener("transitionend", onTransitionEnd);
   };
 
   nextButton.addEventListener("click", () => {
+    playSfx("swish");
     goToView(currentIndex + 1);
   });
 
   prevButton.addEventListener("click", () => {
+    playSfx("swish");
     goToView(currentIndex - 1);
   });
 
