@@ -1,6 +1,10 @@
 import { API_BASE_URL } from "./api";
 import { refreshPlayers } from "./playerSelection";
-import { onArcadeModeChanged, onMusicToggleChanged } from "./sound";
+import {
+  onArcadeModeChanged,
+  onMusicToggleChanged,
+  onSfxToggleChanged,
+} from "./sound";
 
 const STORAGE_KEY_ARCADE = "arcadeModeEnabled";
 const STORAGE_KEY_MUSIC = "arcadeMusicEnabled";
@@ -73,6 +77,7 @@ export const initArcadeMode = (goToView: (index: number) => void) => {
 
   sfxToggle.addEventListener("change", () => {
     setStoredFlag(STORAGE_KEY_SFX, sfxToggle.checked);
+    onSfxToggleChanged();
   });
 
   const form = document.getElementById("add-player-form") as HTMLFormElement;

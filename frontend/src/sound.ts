@@ -9,6 +9,7 @@ const getMusicEl = (): HTMLAudioElement => {
     musicEl = new Audio(MUSIC_SRC);
     musicEl.loop = true;
     musicEl.volume = 0.5;
+    musicEl.preload = "auto";
   }
   return musicEl;
 };
@@ -39,6 +40,7 @@ export const stopMusic = () => {
 
 export const onArcadeModeChanged = (enabled: boolean) => {
   if (enabled) {
+    preloadArcadeAudio();
     tryPlayMusic();
   } else {
     stopMusic();
@@ -53,10 +55,18 @@ export const onMusicToggleChanged = () => {
   }
 };
 
-// Small registry of one-shot sound effects — extension point for more UI
-// blips/swishes. Voice clips (player names, match-win announcements) live in
-// their own registries below since they're keyed by player name, not a
-// fixed set of UI events.
+export const onSfxToggleChanged = () => {
+  if (isSfxEffectivelyOn()) preloadArcadeAudio();
+};
+
+// --- one-shot UI sound effects ---
+// A small pool of pre-fetched instances per key lets rapid repeated
+// triggers (e.g. fast +/- taps) overlap instead of cutting each other off,
+// while avoiding cloneNode() — a clone does NOT inherit the original's
+// buffered media data, so it has to re-fetch over the network from
+// scratch on every single play. That re-fetch is exactly what caused the
+// 1-2s lag on a real (especially mobile) network against the deployed
+// site, even though it was unnoticeable on localhost.
 type SfxKey = "swish" | "blip";
 
 const SFX_FILES: Record<SfxKey, string> = {
@@ -64,15 +74,35 @@ const SFX_FILES: Record<SfxKey, string> = {
   blip: "/assets/sounds/sfx/blip.mp3",
 };
 
-const sfxPool: Partial<Record<SfxKey, HTMLAudioElement>> = {};
+const SFX_POOL_SIZE = 4;
+const sfxPools: Partial<Record<SfxKey, HTMLAudioElement[]>> = {};
+const sfxPoolIndex: Partial<Record<SfxKey, number>> = {};
+
+const ensureSfxPool = (key: SfxKey): HTMLAudioElement[] => {
+  let pool = sfxPools[key];
+  if (!pool) {
+    pool = Array.from({ length: SFX_POOL_SIZE }, () => {
+      const audio = new Audio(SFX_FILES[key]);
+      audio.preload = "auto";
+      audio.load();
+      return audio;
+    });
+    sfxPools[key] = pool;
+    sfxPoolIndex[key] = 0;
+  }
+  return pool;
+};
 
 export const playSfx = (key: SfxKey) => {
   if (!isSfxEffectivelyOn()) return;
 
-  // Clone so rapid repeated triggers (e.g. fast +/- taps) can overlap
-  // instead of cutting each other off.
-  const base = sfxPool[key] ?? (sfxPool[key] = new Audio(SFX_FILES[key]));
-  const instance = base.cloneNode() as HTMLAudioElement;
+  const pool = ensureSfxPool(key);
+  const index = sfxPoolIndex[key] ?? 0;
+  sfxPoolIndex[key] = (index + 1) % pool.length;
+
+  const instance = pool[index];
+  instance.pause();
+  instance.currentTime = 0;
   instance.volume = 0.6;
   instance.play().catch(() => {});
 };
@@ -105,10 +135,12 @@ const handleGenericClick = (event: MouseEvent) => {
 export const initSound = () => {
   // Covers the "settings were already on in localStorage" case on a fresh
   // page load; falls back to the pointerdown retry above if blocked.
+  if (isSfxEffectivelyOn()) preloadArcadeAudio();
   tryPlayMusic();
   document.addEventListener("click", handleGenericClick);
 };
 
+// --- voice clips (player names, match-win announcements) ---
 // Maps each player's stored DB name to its recorded voice-clip filename.
 // Spelled out explicitly rather than slugified, since a couple of names
 // don't match their DB spelling 1:1 (e.g. "SHIRRE" was recorded as
@@ -151,12 +183,58 @@ const WIN_PHRASE_FILES = [
 
 const LEGEND_PHRASE_FILE = "/assets/sounds/phrases/the-ping-pong-legend.mp3";
 
+// Every voice-clip src is fetched once and reused — never `new Audio()` at
+// play time — so playback starts immediately instead of waiting on a fresh
+// network round-trip each time.
+const voiceClipCache = new Map<string, HTMLAudioElement>();
+
+const getVoiceClip = (src: string): HTMLAudioElement => {
+  let audio = voiceClipCache.get(src);
+  if (!audio) {
+    audio = new Audio(src);
+    audio.preload = "auto";
+    voiceClipCache.set(src, audio);
+  }
+  return audio;
+};
+
 const playClip = (src: string): Promise<void> =>
   new Promise((resolve) => {
-    const audio = new Audio(src);
-    audio.addEventListener("ended", () => resolve(), { once: true });
-    audio.play().catch(() => resolve());
+    const audio = getVoiceClip(src);
+    audio.currentTime = 0;
+    const onEnded = () => {
+      audio.removeEventListener("ended", onEnded);
+      resolve();
+    };
+    audio.addEventListener("ended", onEnded);
+    audio.play().catch(() => {
+      audio.removeEventListener("ended", onEnded);
+      resolve();
+    });
   });
+
+// Fetches every SFX/voice clip (and primes the music element) up front as
+// soon as Arcade Mode — or just its SFX sub-toggle — turns on, instead of
+// waiting until the moment of first playback to start each fetch.
+let arcadeAudioPreloaded = false;
+
+const preloadArcadeAudio = () => {
+  if (arcadeAudioPreloaded) return;
+  arcadeAudioPreloaded = true;
+
+  ensureSfxPool("swish");
+  ensureSfxPool("blip");
+  getMusicEl().load();
+
+  const voiceUrls = [
+    ...Object.values(PLAYER_NAME_SOUND_FILES).map(
+      (file) => `/assets/sounds/names/${file}.mp3`,
+    ),
+    LEGEND_PHRASE_FILE,
+    ...WIN_PHRASE_FILES,
+  ];
+  voiceUrls.forEach((src) => getVoiceClip(src).load());
+};
 
 // Players added later (e.g. via Arcade Mode's add-player form) have no
 // recorded voice clip — "The Ping Pong Legend" stands in as their name.
