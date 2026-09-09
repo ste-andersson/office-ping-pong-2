@@ -11,7 +11,8 @@ public record PlayerDetailsDto(
         long matchesPlayed,
         long wins,
         long winRate,
-        long totalPoints,
+        long pointsFor,
+        long pointsAgainst,
         List<String> form,
         List<PlayerMatchSummaryDto> matches
 ) {

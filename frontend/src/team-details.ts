@@ -28,7 +28,8 @@ type TeamDetails = {
   matchesPlayed: number;
   wins: number;
   winRate: number;
-  totalPoints: number;
+  pointsFor: number;
+  pointsAgainst: number;
   form: string[];
   matchups: TeamMatchup[];
   matches: TeamMatch[];
@@ -123,7 +124,7 @@ const renderTeamDetails = (details: TeamDetails) => {
         <span class="team-details-stat-label">Win rate</span>
       </div>
       <div class="team-details-stat">
-        <span class="team-details-stat-value">${details.totalPoints}</span>
+        <span class="team-details-stat-value">${details.pointsFor}-${details.pointsAgainst}</span>
         <span class="team-details-stat-label">Total points</span>
       </div>
     </div>

@@ -8,7 +8,8 @@ public record TeamDetailsDto(
         long matchesPlayed,
         long wins,
         long winRate,
-        long totalPoints,
+        long pointsFor,
+        long pointsAgainst,
         List<String> form,
         List<TeamMatchupDto> matchups,
         List<MatchResponseDto> matches

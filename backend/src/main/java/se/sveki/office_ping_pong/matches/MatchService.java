@@ -140,8 +140,28 @@ public class MatchService {
         long winRate = matchesPlayed == 0
                 ? 0
                 : Math.round((wins * 100.0) / matchesPlayed);
-        long totalPoints = teamMatches.stream()
-                .mapToLong(m -> m.getTopPlayerScore() + m.getBottomPlayerScore())
+        // Points scored by this team's player(s) vs. the opponent's, like a
+        // football goal difference. A self-matchup (both players on this
+        // team) has no external opponent, so both scores count as "for" and
+        // nothing is added to "against".
+        long pointsFor = teamMatches.stream()
+                .mapToLong(m -> {
+                    boolean topIsTeam = team.equals(m.getTopPlayer().getTeam());
+                    boolean bottomIsTeam = team.equals(m.getBottomPlayer().getTeam());
+                    long points = 0;
+                    if (topIsTeam) points += m.getTopPlayerScore();
+                    if (bottomIsTeam) points += m.getBottomPlayerScore();
+                    return points;
+                })
+                .sum();
+        long pointsAgainst = teamMatches.stream()
+                .mapToLong(m -> {
+                    boolean topIsTeam = team.equals(m.getTopPlayer().getTeam());
+                    boolean bottomIsTeam = team.equals(m.getBottomPlayer().getTeam());
+                    if (topIsTeam && bottomIsTeam) return 0;
+                    if (topIsTeam) return m.getBottomPlayerScore();
+                    return m.getTopPlayerScore();
+                })
                 .sum();
 
         List<String> form = teamMatches.stream()
@@ -192,7 +212,8 @@ public class MatchService {
                 matchesPlayed,
                 wins,
                 winRate,
-                totalPoints,
+                pointsFor,
+                pointsAgainst,
                 lastFive,
                 matchups,
                 matches
@@ -242,8 +263,11 @@ public class MatchService {
         long winRate = matchesPlayed == 0
                 ? 0
                 : Math.round((wins * 100.0) / matchesPlayed);
-        long totalPoints = playerMatches.stream()
-                .mapToLong(m -> m.getTopPlayerScore() + m.getBottomPlayerScore())
+        long pointsFor = playerMatches.stream()
+                .mapToLong(m -> m.getTopPlayer().equals(player) ? m.getTopPlayerScore() : m.getBottomPlayerScore())
+                .sum();
+        long pointsAgainst = playerMatches.stream()
+                .mapToLong(m -> m.getTopPlayer().equals(player) ? m.getBottomPlayerScore() : m.getTopPlayerScore())
                 .sum();
 
         List<PlayerMatchSummaryDto> matches = playerMatches.stream()
@@ -259,7 +283,8 @@ public class MatchService {
                 matchesPlayed,
                 wins,
                 winRate,
-                totalPoints,
+                pointsFor,
+                pointsAgainst,
                 info.form(),
                 matches
         );
