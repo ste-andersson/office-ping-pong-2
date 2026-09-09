@@ -204,8 +204,7 @@ main {
     flex: 1;
     min-height: 0;
     height: auto;
-    overflow-x: hidden;
-    overflow-y: visible;
+    overflow: hidden;
     position: relative;
   }
 }

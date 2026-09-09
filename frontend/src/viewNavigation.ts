@@ -10,6 +10,8 @@ export const setJustSubmitted = (value: boolean) => {
 };
 
 export const initViewNavigation = () => {
+  const track = document.getElementById("view-track") as HTMLElement;
+
   const views: HTMLElement[] = [
     document.getElementById("arcade-view") as HTMLElement,
     document.getElementById("report-view") as HTMLElement,
@@ -26,30 +28,6 @@ export const initViewNavigation = () => {
   let currentIndex = 1;
   let isAnimating = false;
 
-  const clearViewClasses = (view: HTMLElement) => {
-    view.classList.remove(
-      "active",
-      "offscreen-left",
-      "offscreen-right",
-      "exit-left",
-      "exit-right",
-    );
-  };
-
-  const positionViews = () => {
-    views.forEach((view, index) => {
-      clearViewClasses(view);
-
-      if (index < currentIndex) {
-        view.classList.add("offscreen-left");
-      } else if (index > currentIndex) {
-        view.classList.add("offscreen-right");
-      } else {
-        view.classList.add("active");
-      }
-    });
-  };
-
   const updateNavButtons = () => {
     prevButton.style.opacity = currentIndex === 0 ? "0" : "1";
     prevButton.style.pointerEvents = currentIndex === 0 ? "none" : "auto";
@@ -58,6 +36,10 @@ export const initViewNavigation = () => {
       currentIndex === views.length - 1 ? "none" : "auto";
   };
 
+  // All views ride on the single #view-track element (see
+  // view-transition.css) — sliding just moves that one shared transform, so
+  // the outgoing and incoming views can never drift out of sync with each
+  // other the way two independently-animated elements could.
   const goToView = (nextIndex: number) => {
     if (isAnimating) return;
     if (nextIndex < 0 || nextIndex >= views.length) return;
@@ -65,42 +47,32 @@ export const initViewNavigation = () => {
 
     isAnimating = true;
 
-    const currentView = views[currentIndex];
-    const nextView = views[nextIndex];
-    const goingForward = nextIndex > currentIndex;
+    const previousView = views[currentIndex];
+    currentIndex = nextIndex;
+    const nextView = views[currentIndex];
 
-    positionViews();
-
-    if (goingForward) {
-      nextView.classList.remove("offscreen-right");
-    } else {
-      nextView.classList.remove("offscreen-left");
-    }
-
-    void nextView.offsetWidth;
-
+    // The outgoing view keeps rendering (via "exiting") for the full slide
+    // so it's visibly still there mid-transition, but loses interactivity
+    // immediately rather than staying clickable until the animation ends.
+    previousView.classList.remove("active");
+    previousView.classList.add("exiting");
     nextView.classList.add("active");
 
-    if (goingForward) {
-      currentView.classList.add("exit-left");
-    } else {
-      currentView.classList.add("exit-right");
-    }
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
     const onTransitionEnd = (event: TransitionEvent) => {
       if (event.propertyName !== "transform") return;
-      currentView.removeEventListener("transitionend", onTransitionEnd);
-      currentIndex = nextIndex;
-      positionViews();
+      track.removeEventListener("transitionend", onTransitionEnd);
+      previousView.classList.remove("exiting");
       updateNavButtons();
       isAnimating = false;
 
-      if (nextIndex === 2 && !justSubmitted) loadResultsView();
-      if (nextIndex === 3) loadTeamStandingsView();
-      if (nextIndex === 4) loadPlayerStandingsView();
+      if (currentIndex === 2 && !justSubmitted) loadResultsView();
+      if (currentIndex === 3) loadTeamStandingsView();
+      if (currentIndex === 4) loadPlayerStandingsView();
     };
 
-    currentView.addEventListener("transitionend", onTransitionEnd);
+    track.addEventListener("transitionend", onTransitionEnd);
   };
 
   nextButton.addEventListener("click", () => {
@@ -113,7 +85,8 @@ export const initViewNavigation = () => {
     goToView(currentIndex - 1);
   });
 
-  positionViews();
+  views[currentIndex].classList.add("active");
+  track.style.transform = `translateX(-${currentIndex * 100}%)`;
   updateNavButtons();
 
   requestAnimationFrame(() => {

@@ -1,4 +1,4 @@
-.app-loading .view {
+.app-loading #view-track {
   transition: none !important;
 }
 
@@ -6,51 +6,32 @@
   visibility: hidden;
 }
 
+/* All views ride side by side on one shared strip. Sliding between them
+   moves this single element instead of independently animating each view's
+   own transform — two elements animating "in sync" can drift apart (one
+   compositor layer promoted or repainted a frame later than the other,
+   especially on mobile), but a single element can never desync from
+   itself. */
+#view-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.85s ease;
+}
+
 .view {
-  position: absolute;
-  inset: 0;
-  transform: translateX(0);
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   visibility: hidden;
-  transition:
-    transform 0.85s ease,
-    visibility 0s linear 0.85s;
+}
+
+.view.active,
+.view.exiting {
+  visibility: visible;
 }
 
 .view.active {
-  transform: translateX(0);
   pointer-events: auto;
-  visibility: visible;
-  z-index: 2;
-  transition:
-    transform 0.85s ease,
-    visibility 0s linear 0s;
-}
-
-.view.offscreen-left {
-  transform: translateX(-100%);
-  visibility: hidden;
-}
-
-.view.offscreen-right {
-  transform: translateX(100%);
-  visibility: hidden;
-}
-
-.view.exit-left {
-  transform: translateX(-100%);
-  visibility: visible;
-  z-index: 1;
-  transition:
-    transform 0.85s ease,
-    visibility 0s linear 0.85s;
-}
-
-.view.exit-right {
-  transform: translateX(100%);
-  visibility: visible;
-  z-index: 1;
-  transition:
-    transform 0.85s ease,
-    visibility 0s linear 0.85s;
 }

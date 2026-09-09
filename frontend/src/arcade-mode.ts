@@ -5,6 +5,7 @@ import {
   onMusicToggleChanged,
   onSfxToggleChanged,
   applyMusicVolume,
+  applySfxVolume,
 } from "./sound";
 
 const STORAGE_KEY_ARCADE = "arcadeModeEnabled";
@@ -105,6 +106,7 @@ export const initArcadeMode = (goToView: (index: number) => void) => {
 
   sfxVolumeSlider.addEventListener("input", () => {
     setStoredPercent(STORAGE_KEY_SFX_VOLUME, Number(sfxVolumeSlider.value));
+    applySfxVolume();
   });
 
   arcadeToggle.addEventListener("change", () => {

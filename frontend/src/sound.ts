@@ -5,6 +5,73 @@ import {
   getSfxVolume,
 } from "./arcade-mode";
 
+// iOS Safari deliberately ignores HTMLMediaElement.volume on <audio>
+// elements — playback loudness there is tied only to the device's
+// hardware volume buttons, by design, so setting `.volume` in JS silently
+// does nothing audible on iPhone/iPad even though the property reads back
+// correctly. Routing every clip through the Web Audio API's GainNode is
+// the standard workaround: gain IS respected on iOS. `.volume` is still
+// set alongside it below (harmless, and it's the only thing that matters
+// on platforms where Web Audio routing isn't available).
+let audioCtx: AudioContext | null = null;
+let musicGainNode: GainNode | null = null;
+let sfxGainNode: GainNode | null = null;
+
+// Mobile browsers can suspend an idle AudioContext to save battery. While
+// suspended, the graph produces no audible output at all even though a
+// routed <audio> element's playback position keeps advancing normally, so
+// .play() during a suspend can run a short clip's entire duration in
+// silence before the graph comes back. .play() must still be called
+// synchronously within the user gesture though (iOS can refuse it
+// otherwise), so it can't just wait on resume() — instead a keep-alive
+// timer (below) tries to make sure the context is never suspended in the
+// first place by the time a sound is triggered.
+let keepAliveTimer: ReturnType<typeof setInterval> | null = null;
+
+const startKeepAlive = (ctx: AudioContext) => {
+  if (keepAliveTimer) return;
+  keepAliveTimer = setInterval(() => {
+    if (ctx.state === "suspended") ctx.resume().catch(() => {});
+  }, 2000);
+};
+
+const ensureAudioGraph = (): AudioContext => {
+  if (!audioCtx) {
+    audioCtx = new AudioContext();
+
+    musicGainNode = audioCtx.createGain();
+    musicGainNode.gain.value = getMusicVolume();
+    musicGainNode.connect(audioCtx.destination);
+
+    sfxGainNode = audioCtx.createGain();
+    sfxGainNode.gain.value = getSfxVolume();
+    sfxGainNode.connect(audioCtx.destination);
+
+    startKeepAlive(audioCtx);
+  }
+  return audioCtx;
+};
+
+const resumeAudioContext = (): Promise<void> => {
+  const ctx = ensureAudioGraph();
+  if (ctx.state === "suspended") return ctx.resume().catch(() => {});
+  return Promise.resolve();
+};
+
+// An <audio> element can only ever be wired into the Web Audio graph once
+// (a second createMediaElementSource call on the same element throws), so
+// this must run exactly once per element, right when it's created.
+const routeThroughGain = (audio: HTMLAudioElement, gain: "music" | "sfx") => {
+  try {
+    ensureAudioGraph();
+    const node = gain === "music" ? musicGainNode! : sfxGainNode!;
+    audioCtx!.createMediaElementSource(audio).connect(node);
+  } catch {
+    // Web Audio API unavailable — falls back to element.volume alone,
+    // which is fine everywhere except iOS Safari.
+  }
+};
+
 const MUSIC_SRC = "/assets/sounds/music/spin-chart.mp3";
 
 let musicEl: HTMLAudioElement | null = null;
@@ -15,6 +82,7 @@ const getMusicEl = (): HTMLAudioElement => {
     musicEl.loop = true;
     musicEl.volume = getMusicVolume();
     musicEl.preload = "auto";
+    routeThroughGain(musicEl, "music");
   }
   return musicEl;
 };
@@ -23,10 +91,18 @@ const getMusicEl = (): HTMLAudioElement => {
 // the slider takes effect immediately even while music is already playing.
 export const applyMusicVolume = () => {
   if (musicEl) musicEl.volume = getMusicVolume();
+  if (musicGainNode) musicGainNode.gain.value = getMusicVolume();
+};
+
+// Applies the current SFX slider value to everything routed through the
+// shared SFX gain node (blips/swishes and voice clips) immediately.
+export const applySfxVolume = () => {
+  if (sfxGainNode) sfxGainNode.gain.value = getSfxVolume();
 };
 
 const tryPlayMusic = () => {
   if (!isMusicEffectivelyOn()) return;
+  resumeAudioContext();
 
   getMusicEl()
     .play()
@@ -71,13 +147,16 @@ export const onSfxToggleChanged = () => {
 };
 
 // --- one-shot UI sound effects ---
-// A small pool of pre-fetched instances per key lets rapid repeated
-// triggers (e.g. fast +/- taps) overlap instead of cutting each other off,
-// while avoiding cloneNode() — a clone does NOT inherit the original's
-// buffered media data, so it has to re-fetch over the network from
-// scratch on every single play. That re-fetch is exactly what caused the
-// 1-2s lag on a real (especially mobile) network against the deployed
-// site, even though it was unnoticeable on localhost.
+// Blips/swishes are pre-decoded into raw AudioBuffers and triggered via
+// AudioBufferSourceNode instead of <audio>.play(). Playing an <audio>
+// element re-runs the browser's full media pipeline (cache check, demux,
+// decode) on every single play — on a real mobile CPU that's simsurable
+// latency each time, which is fine for a rarely-triggered voice clip but
+// reads as "instant on desktop, delayed on phone" for a click sound that's
+// meant to feel immediate. A pre-decoded buffer skips all of that: playing
+// it is just scheduling already-in-memory PCM through the graph, so start
+// latency is minimal and consistent across platforms. It also means no
+// pooling is needed — any number of overlapping plays can share one buffer.
 type SfxKey = "swish" | "blip";
 
 const SFX_FILES: Record<SfxKey, string> = {
@@ -85,37 +164,54 @@ const SFX_FILES: Record<SfxKey, string> = {
   blip: "/assets/sounds/sfx/blip.mp3",
 };
 
-const SFX_POOL_SIZE = 4;
-const sfxPools: Partial<Record<SfxKey, HTMLAudioElement[]>> = {};
-const sfxPoolIndex: Partial<Record<SfxKey, number>> = {};
+const sfxBuffers: Partial<Record<SfxKey, AudioBuffer>> = {};
+const sfxBufferPromises: Partial<Record<SfxKey, Promise<AudioBuffer>>> = {};
 
-const ensureSfxPool = (key: SfxKey): HTMLAudioElement[] => {
-  let pool = sfxPools[key];
-  if (!pool) {
-    pool = Array.from({ length: SFX_POOL_SIZE }, () => {
-      const audio = new Audio(SFX_FILES[key]);
-      audio.preload = "auto";
-      audio.load();
-      return audio;
-    });
-    sfxPools[key] = pool;
-    sfxPoolIndex[key] = 0;
+const loadSfxBuffer = (key: SfxKey): Promise<AudioBuffer> => {
+  const cached = sfxBuffers[key];
+  if (cached) return Promise.resolve(cached);
+
+  let pending = sfxBufferPromises[key];
+  if (!pending) {
+    const ctx = ensureAudioGraph();
+    pending = fetch(SFX_FILES[key])
+      .then((res) => res.arrayBuffer())
+      .then((data) => ctx.decodeAudioData(data))
+      .then((buffer) => {
+        sfxBuffers[key] = buffer;
+        return buffer;
+      });
+    sfxBufferPromises[key] = pending;
   }
-  return pool;
+  return pending;
+};
+
+const playSfxBuffer = (buffer: AudioBuffer) => {
+  const ctx = ensureAudioGraph();
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(sfxGainNode!);
+  source.start(0);
 };
 
 export const playSfx = (key: SfxKey) => {
   if (!isSfxEffectivelyOn()) return;
 
-  const pool = ensureSfxPool(key);
-  const index = sfxPoolIndex[key] ?? 0;
-  sfxPoolIndex[key] = (index + 1) % pool.length;
-
-  const instance = pool[index];
-  instance.pause();
-  instance.currentTime = 0;
-  instance.volume = getSfxVolume();
-  instance.play().catch(() => {});
+  // Unlike <audio>.play(), starting an already-decoded buffer isn't
+  // subject to the "must be called synchronously in the gesture" autoplay
+  // rule (only the AudioContext itself needs a gesture to unlock, which
+  // resumeAudioContext()/the keep-alive already handle) — so it's safe to
+  // wait for the context to actually be running before playing, avoiding
+  // the "swallowed by a suspended graph" issue entirely instead of just
+  // reducing its odds.
+  resumeAudioContext().then(() => {
+    const buffer = sfxBuffers[key];
+    if (buffer) {
+      playSfxBuffer(buffer);
+    } else {
+      loadSfxBuffer(key).then(playSfxBuffer);
+    }
+  });
 };
 
 // Generic "go nuts" click sound for interactive elements across the app,
@@ -149,6 +245,18 @@ export const initSound = () => {
   if (isSfxEffectivelyOn()) preloadArcadeAudio();
   tryPlayMusic();
   document.addEventListener("click", handleGenericClick);
+
+  // Nudge the AudioContext to resume as early as possible on every touch
+  // — pointerdown fires before the click that actually triggers a sound,
+  // giving resume() a head start so the graph is more likely to already
+  // be live by the time playback is requested.
+  document.addEventListener(
+    "pointerdown",
+    () => {
+      if (isSfxEffectivelyOn() || isMusicEffectivelyOn()) resumeAudioContext();
+    },
+    { passive: true },
+  );
 };
 
 // --- voice clips (player names, match-win announcements) ---
@@ -204,6 +312,7 @@ const getVoiceClip = (src: string): HTMLAudioElement => {
   if (!audio) {
     audio = new Audio(src);
     audio.preload = "auto";
+    routeThroughGain(audio, "sfx");
     voiceClipCache.set(src, audio);
   }
   return audio;
@@ -218,6 +327,10 @@ const playClip = (src: string): Promise<void> =>
       resolve();
     };
     audio.addEventListener("ended", onEnded);
+
+    // Same reasoning as playSfx: don't gate .play() behind resumeAudioContext()'s
+    // promise — call it synchronously and let the resume happen in parallel.
+    resumeAudioContext();
     audio.play().catch(() => {
       audio.removeEventListener("ended", onEnded);
       resolve();
@@ -233,8 +346,8 @@ const preloadArcadeAudio = () => {
   if (arcadeAudioPreloaded) return;
   arcadeAudioPreloaded = true;
 
-  ensureSfxPool("swish");
-  ensureSfxPool("blip");
+  loadSfxBuffer("swish");
+  loadSfxBuffer("blip");
   getMusicEl().load();
 
   const voiceUrls = [

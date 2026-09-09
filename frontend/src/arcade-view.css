@@ -40,9 +40,14 @@
 }
 
 .arcade-volume-slider {
-  width: 100%;
+  /* The floating #prev-view/#next-view nav buttons float on top of the
+     content at the viewport's left/right edges, so a full-width slider's
+     ends would sit underneath them — a touch meant for the slider's edge
+     would hit the button instead. This margin keeps the draggable range
+     clear of that footprint (52px button + 8px offset from the edge). */
+  width: calc(100% - 88px);
+  margin: 0 44px;
   height: 24px;
-  margin: 0;
   appearance: none;
   -webkit-appearance: none;
   background: transparent;
