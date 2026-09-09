@@ -4,11 +4,17 @@ import {
   onArcadeModeChanged,
   onMusicToggleChanged,
   onSfxToggleChanged,
+  applyMusicVolume,
 } from "./sound";
 
 const STORAGE_KEY_ARCADE = "arcadeModeEnabled";
 const STORAGE_KEY_MUSIC = "arcadeMusicEnabled";
 const STORAGE_KEY_SFX = "arcadeSfxEnabled";
+const STORAGE_KEY_MUSIC_VOLUME = "arcadeMusicVolumePercent";
+const STORAGE_KEY_SFX_VOLUME = "arcadeSfxVolumePercent";
+
+const DEFAULT_MUSIC_VOLUME_PERCENT = 15;
+const DEFAULT_SFX_VOLUME_PERCENT = 90;
 
 const getStoredFlag = (key: string, defaultValue: boolean): boolean => {
   try {
@@ -28,6 +34,25 @@ const setStoredFlag = (key: string, value: boolean) => {
   }
 };
 
+const getStoredPercent = (key: string, defaultValue: number): number => {
+  try {
+    const stored = localStorage.getItem(key);
+    if (stored === null) return defaultValue;
+    const parsed = Number(stored);
+    return Number.isFinite(parsed) ? parsed : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const setStoredPercent = (key: string, value: number) => {
+  try {
+    localStorage.setItem(key, String(value));
+  } catch {
+    // see setStoredFlag above
+  }
+};
+
 export const isArcadeModeEnabled = (): boolean =>
   getStoredFlag(STORAGE_KEY_ARCADE, false);
 
@@ -36,6 +61,13 @@ export const isMusicEffectivelyOn = (): boolean =>
 
 export const isSfxEffectivelyOn = (): boolean =>
   isArcadeModeEnabled() && getStoredFlag(STORAGE_KEY_SFX, true);
+
+export const getMusicVolume = (): number =>
+  getStoredPercent(STORAGE_KEY_MUSIC_VOLUME, DEFAULT_MUSIC_VOLUME_PERCENT) /
+  100;
+
+export const getSfxVolume = (): number =>
+  getStoredPercent(STORAGE_KEY_SFX_VOLUME, DEFAULT_SFX_VOLUME_PERCENT) / 100;
 
 export const initArcadeMode = (goToView: (index: number) => void) => {
   const arcadeToggle = document.getElementById(
@@ -48,11 +80,32 @@ export const initArcadeMode = (goToView: (index: number) => void) => {
     "arcade-sfx-toggle",
   ) as HTMLInputElement;
   const subToggles = document.getElementById("arcade-sub-toggles")!;
+  const musicVolumeSlider = document.getElementById(
+    "arcade-music-volume",
+  ) as HTMLInputElement;
+  const sfxVolumeSlider = document.getElementById(
+    "arcade-sfx-volume",
+  ) as HTMLInputElement;
 
   arcadeToggle.checked = isArcadeModeEnabled();
   musicToggle.checked = getStoredFlag(STORAGE_KEY_MUSIC, true);
   sfxToggle.checked = getStoredFlag(STORAGE_KEY_SFX, true);
+  musicVolumeSlider.value = String(
+    getStoredPercent(STORAGE_KEY_MUSIC_VOLUME, DEFAULT_MUSIC_VOLUME_PERCENT),
+  );
+  sfxVolumeSlider.value = String(
+    getStoredPercent(STORAGE_KEY_SFX_VOLUME, DEFAULT_SFX_VOLUME_PERCENT),
+  );
   subToggles.classList.toggle("hidden", !arcadeToggle.checked);
+
+  musicVolumeSlider.addEventListener("input", () => {
+    setStoredPercent(STORAGE_KEY_MUSIC_VOLUME, Number(musicVolumeSlider.value));
+    applyMusicVolume();
+  });
+
+  sfxVolumeSlider.addEventListener("input", () => {
+    setStoredPercent(STORAGE_KEY_SFX_VOLUME, Number(sfxVolumeSlider.value));
+  });
 
   arcadeToggle.addEventListener("change", () => {
     const turningOn = arcadeToggle.checked;

@@ -1,4 +1,9 @@
-import { isMusicEffectivelyOn, isSfxEffectivelyOn } from "./arcade-mode";
+import {
+  isMusicEffectivelyOn,
+  isSfxEffectivelyOn,
+  getMusicVolume,
+  getSfxVolume,
+} from "./arcade-mode";
 
 const MUSIC_SRC = "/assets/sounds/music/spin-chart.mp3";
 
@@ -8,10 +13,16 @@ const getMusicEl = (): HTMLAudioElement => {
   if (!musicEl) {
     musicEl = new Audio(MUSIC_SRC);
     musicEl.loop = true;
-    musicEl.volume = 0.5;
+    musicEl.volume = getMusicVolume();
     musicEl.preload = "auto";
   }
   return musicEl;
+};
+
+// Applies the current slider value to the live music element, so dragging
+// the slider takes effect immediately even while music is already playing.
+export const applyMusicVolume = () => {
+  if (musicEl) musicEl.volume = getMusicVolume();
 };
 
 const tryPlayMusic = () => {
@@ -103,7 +114,7 @@ export const playSfx = (key: SfxKey) => {
   const instance = pool[index];
   instance.pause();
   instance.currentTime = 0;
-  instance.volume = 0.6;
+  instance.volume = getSfxVolume();
   instance.play().catch(() => {});
 };
 

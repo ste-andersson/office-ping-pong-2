@@ -33,19 +33,39 @@
           </div>
 
           <div id="arcade-sub-toggles" class="arcade-sub-toggles hidden">
-            <div class="arcade-toggle-row">
-              <span class="arcade-toggle-label">Music</span>
-              <label class="toggle-switch">
-                <input type="checkbox" id="arcade-music-toggle" />
-                <span class="toggle-switch-track"></span>
-              </label>
+            <div class="arcade-toggle-row arcade-toggle-row--stacked">
+              <div class="arcade-toggle-top">
+                <span class="arcade-toggle-label">Music</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="arcade-music-toggle" />
+                  <span class="toggle-switch-track"></span>
+                </label>
+              </div>
+              <input
+                type="range"
+                id="arcade-music-volume"
+                class="arcade-volume-slider"
+                min="0"
+                max="100"
+                step="1"
+              />
             </div>
-            <div class="arcade-toggle-row">
-              <span class="arcade-toggle-label">SFX</span>
-              <label class="toggle-switch">
-                <input type="checkbox" id="arcade-sfx-toggle" />
-                <span class="toggle-switch-track"></span>
-              </label>
+            <div class="arcade-toggle-row arcade-toggle-row--stacked">
+              <div class="arcade-toggle-top">
+                <span class="arcade-toggle-label">SFX</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="arcade-sfx-toggle" />
+                  <span class="toggle-switch-track"></span>
+                </label>
+              </div>
+              <input
+                type="range"
+                id="arcade-sfx-volume"
+                class="arcade-volume-slider"
+                min="0"
+                max="100"
+                step="1"
+              />
             </div>
           </div>
 
