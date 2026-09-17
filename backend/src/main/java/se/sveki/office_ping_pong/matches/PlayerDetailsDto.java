@@ -11,6 +11,7 @@ public record PlayerDetailsDto(
         long matchesPlayed,
         long wins,
         long winRate,
+        long eloRating,
         long pointsFor,
         long pointsAgainst,
         List<String> form,

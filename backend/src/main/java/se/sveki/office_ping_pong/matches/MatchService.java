@@ -6,10 +6,15 @@ import se.sveki.office_ping_pong.players.PlayerRepository;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MatchService {
+
+    private static final double INITIAL_ELO = 1000.0;
+    private static final double ELO_K_FACTOR = 32.0;
 
     private final MatchRepository matchRepository;
     private final PlayerRepository playerRepository;
@@ -49,6 +54,7 @@ public class MatchService {
 
     public List<StandingsDto> getStandings() {
         List<MatchEntity> matches = matchRepository.findAll();
+        Map<Long, Double> eloRatings = computeEloRatings(matches);
 
         return playerRepository.findAll().stream()
                 .map(p -> {
@@ -70,6 +76,8 @@ public class MatchService {
                             ? 0
                             : Math.round((wins * 100.0) / matchesPlayed);
 
+                    long eloRating = Math.round(eloRatings.getOrDefault(p.getId(), INITIAL_ELO));
+
                     return new StandingsDto(
                             p.getId(),
                             p.getName(),
@@ -77,7 +85,8 @@ public class MatchService {
                             p.getTeam(),
                             matchesPlayed,
                             wins,
-                            winRate
+                            winRate,
+                            eloRating
                     );
                 })
                 .filter(standing -> standing.matchesPlayed() > 0)
@@ -263,6 +272,7 @@ public class MatchService {
         long winRate = matchesPlayed == 0
                 ? 0
                 : Math.round((wins * 100.0) / matchesPlayed);
+        long eloRating = Math.round(computeEloRatings(allMatches).getOrDefault(player.getId(), INITIAL_ELO));
         long pointsFor = playerMatches.stream()
                 .mapToLong(m -> m.getTopPlayer().equals(player) ? m.getTopPlayerScore() : m.getBottomPlayerScore())
                 .sum();
@@ -283,6 +293,7 @@ public class MatchService {
                 matchesPlayed,
                 wins,
                 winRate,
+                eloRating,
                 pointsFor,
                 pointsAgainst,
                 info.form(),
@@ -382,6 +393,31 @@ public class MatchService {
         return isTop
                 ? match.getTopPlayerScore() > match.getBottomPlayerScore()
                 : match.getBottomPlayerScore() > match.getTopPlayerScore();
+    }
+
+    private Map<Long, Double> computeEloRatings(List<MatchEntity> matches) {
+        Map<Long, Double> ratings = new HashMap<>();
+
+        matches.stream()
+                .sorted(Comparator.comparing(MatchEntity::getPlayedAt))
+                .forEach(match -> {
+                    long topId = match.getTopPlayer().getId();
+                    long bottomId = match.getBottomPlayer().getId();
+                    double topRating = ratings.getOrDefault(topId, INITIAL_ELO);
+                    double bottomRating = ratings.getOrDefault(bottomId, INITIAL_ELO);
+
+                    double topExpected = 1.0 / (1.0 + Math.pow(10, (bottomRating - topRating) / 400.0));
+                    boolean topWon = match.getTopPlayerScore() > match.getBottomPlayerScore();
+                    double topActual = topWon ? 1.0 : 0.0;
+
+                    int scoreDiff = Math.abs(match.getTopPlayerScore() - match.getBottomPlayerScore());
+                    double kEffective = ELO_K_FACTOR * Math.log(scoreDiff + 1);
+
+                    ratings.put(topId, topRating + kEffective * (topActual - topExpected));
+                    ratings.put(bottomId, bottomRating + kEffective * ((1.0 - topActual) - (1.0 - topExpected)));
+                });
+
+        return ratings;
     }
 
     private boolean isTeamWinner(MatchEntity match, String team) {

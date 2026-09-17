@@ -7,6 +7,7 @@ public record StandingsDto(
         String playerTeam,
         long matchesPlayed,
         long wins,
-        long winRate
+        long winRate,
+        long eloRating
 ) {
 }

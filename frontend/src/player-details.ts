@@ -22,6 +22,7 @@ type PlayerDetails = {
   matchesPlayed: number;
   wins: number;
   winRate: number;
+  eloRating: number;
   pointsFor: number;
   pointsAgainst: number;
   form: string[];
@@ -76,7 +77,7 @@ const renderPlayerDetails = (details: PlayerDetails) => {
         <div class="player-details-team-logo team-${details.team}"></div>
         <span class="player-details-team-name">${TEAM_LABELS[details.team]}</span>
       </div>
-      <div class="player-details-rank">Rank #${details.rank}</div>
+      <div class="player-details-rank">Rank #${details.rank} · ${details.eloRating} ELO</div>
       <div class="player-details-form">
         ${details.form
           .map(

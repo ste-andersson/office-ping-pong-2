@@ -9,6 +9,7 @@ type Standing = {
   matchesPlayed: number;
   wins: number;
   winRate: number;
+  eloRating: number;
 };
 
 export const loadPlayerStandingsView = async () => {
@@ -42,7 +43,7 @@ export const loadPlayerStandingsView = async () => {
   </div>
   <div class="standings-main">
     <div class="standings-name">${standing.playerName}</div>
-    <div class="standings-meta">${standing.matchesPlayed} matches · ${standing.winRate}%</div>
+    <div class="standings-meta">${standing.matchesPlayed} matches · ${standing.winRate}% · ${standing.eloRating} ELO</div>
   </div>
   <div class="standings-score">
     <span class="standings-score-value">${standing.wins}</span>
