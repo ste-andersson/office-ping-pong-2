@@ -106,7 +106,7 @@
 .btn-minus,
 .btn-plus {
   width: 100%;
-  min-height: 64px;
+  min-height: 76px;
   border: none;
   font-size: 2.4rem;
   font-weight: 900;
@@ -255,7 +255,7 @@
 
   .btn-minus,
   .btn-plus {
-    min-height: 52px;
+    min-height: 60px;
     font-size: 2rem;
   }
 
